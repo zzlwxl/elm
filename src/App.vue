@@ -1,6 +1,6 @@
 <template>
   <div>
-   ff
+    牛逼克拉斯
   </div>
 </template>
 
