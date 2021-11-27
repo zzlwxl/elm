@@ -1,10 +1,14 @@
 <template>
   <div>
-    牛逼克拉斯
+    <router-view></router-view>
   </div>
 </template>
 
-<style lang="less" scoped>
+<script>
+export default {
 
+}
+</script>
+<style>
 
 </style>
