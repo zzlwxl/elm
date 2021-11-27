@@ -30,6 +30,7 @@ export default {
   created() {
     this.getCityName()
     this.initData()
+    console.log()
   },
   methods: {
     initData() {
