@@ -3,8 +3,10 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import '@/plugins/Vant.js'
-import '@/assets/style.css';
+import 'vant/lib/index.less';
+
 import axios from 'axios'
+
 
 Vue.config.productionTip = false
 Vue.config.productionTip = false
