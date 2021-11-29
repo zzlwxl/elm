@@ -3,7 +3,7 @@ module.exports = {
     ['import', {
       "libraryName": 'vant',
       "libraryDirectory": 'es',
-      "style": true
+      'style':'@/assets/style.less',
     }, 'vant']
   ],
   presets: [

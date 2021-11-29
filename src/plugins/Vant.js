@@ -15,8 +15,26 @@ import {
     Cell, 
     CellGroup,
     Skeleton,
-    Loading
+    Loading,
+    Swipe, 
+    SwipeItem,
+    DropdownMenu, 
+    DropdownItem,
+    TreeSelect,
+    Switch,
+    Tabbar, 
+    TabbarItem,
+    Card,
+    List,
+    Tag,
+    Rate
 } from 'vant';
+Vue.use(Rate)
+Vue.use(Tag)
+Vue.use(List)
+Vue.use(Card)
+Vue.use(Tabbar)
+Vue.use(TabbarItem)
 Vue.use(Button)
 Vue.use(NavBar)
 Vue.use(Icon)
@@ -33,3 +51,9 @@ Vue.use(Cell)
 Vue.use(CellGroup)
 Vue.use(Skeleton)
 Vue.use(Loading)
+Vue.use(Swipe)
+Vue.use(SwipeItem)
+Vue.use(DropdownMenu)
+Vue.use(DropdownItem)
+Vue.use(TreeSelect)
+Vue.use(Switch)
