@@ -2,7 +2,7 @@
   <div>
     <van-nav-bar :title="userLocation">
       <template #left>
-        <van-icon name="search" size="18" />
+        <van-icon @click="goSearch" name="search" size="18" />
       </template>
       <template #right>
         <van-icon @click="goCityList" name="location-o" size="18" />
@@ -11,26 +11,29 @@
     <van-swipe class="my-swipe" :autoplay="3000" indicator-color="white">
       <van-swipe-item v-for="(minArr, index) in foodEntryList" :key="index">
         <van-grid>
-          <van-grid-item :to="'/food?geohash=' + latitude + ',' + longitude + '&title=' + foodEntry.title + '&restaurant_category_id=' + foodEntry.id" v-for="(foodEntry, index) in minArr" :key="index" :icon="'http://item.wangxuelong.vip:8001/img/' + foodEntry.image_url" :text="foodEntry.title" />
+          <van-grid-item :to="'/food?geohash=' + geohash + '&title=' + foodEntry.title + '&restaurant_category_id=' + foodEntry.id" v-for="(foodEntry, index) in minArr" :key="index" :icon="'http://item.wangxuelong.vip:8001/img/' + foodEntry.image_url" :text="foodEntry.title" />
         </van-grid>
       </van-swipe-item>
     </van-swipe>
-    <restaurantList :lltude="lltude"></restaurantList>
-    <van-tabbar active-color="#2196F3" inactive-color="#000" route>
-      <van-tabbar-item replace to="/msite" icon="smile-o">外卖</van-tabbar-item>
-      <van-tabbar-item replace to="/search" icon="search">搜索</van-tabbar-item>
-      <van-tabbar-item replace to="/search" icon="point-gift-o">订单</van-tabbar-item>
-      <van-tabbar-item replace to="/search" icon="manager-o">我的</van-tabbar-item>
-    </van-tabbar>
+    <div class="fjShopClass">
+    <van-icon  name="shop-o" size="12" />
+    <span >附近商家</span>
+    </div>
+    <van-divider />
+    <restaurantList :obj="obj" ></restaurantList>
+   <Tabbar></Tabbar>
   </div>
 </template>
 
 <script>
 import { mapState, mapMutations } from 'vuex'
-import restaurantList from '@/components/restaurantList.vue'
+import RestaurantList from '@/components/RestaurantList.vue'
+import Tabbar from '@/components/Tabbar.vue'
 export default {
+  name:'Msite',
   components:{
-    restaurantList
+    Tabbar,
+    RestaurantList
   },
   data() {
     return {
@@ -41,12 +44,15 @@ export default {
     }
   },
   async created() {
+    //接收新坐标
     if (this.$route.query.geohash) {
       this.lltude = this.$route.query.geohash.split(',')
       //记录当前经纬度
       this.RECORD_ADDRESS(this.lltude)
+      this.RECORD_GEOHASH(this.lltude)
       this.getUserLocation()
     } else {
+      //默认坐标
       this.getUserLocation()
       this.lltude=[this.latitude,this.longitude]
     }
@@ -54,10 +60,19 @@ export default {
     
   },
   computed: {
-    ...mapState(['latitude', 'longitude']),
+    ...mapState(['latitude', 'longitude','geohash']),
+    obj(){
+      return{
+        url:'/shopping/restaurants',
+        objData:{
+          latitude:this.latitude,
+          longitude:this.longitude
+        }
+      }
+    }
   },
   methods: {
-    ...mapMutations(['RECORD_ADDRESS']),
+    ...mapMutations(['RECORD_ADDRESS','RECORD_GEOHASH']),
     // 根据经纬度获取详细定位
     async getUserLocation() {
       const { data, status } = await this.$http.get(`/v2/pois/${this.latitude},${this.longitude}`)
@@ -85,10 +100,25 @@ export default {
         minArr.push(item)
       })
       this.foodEntryList = arr
+      console.log(1)
+      console.log(this.foodEntryList)
     },
-    
+    goSearch(){
+      this.$router.push('/search')
+    }
   },
 }
 </script>
-<style scoped>
+<style lang="less" scoped>
+.fjShopClass{
+  position:absolute;
+  top: 245px;
+  bottom: 0;
+  left: 10px;
+  right: 0;
+  width: 60px;
+  height: 14px;
+  font-size: 12px;
+  color: rgb(155, 155, 155);
+}
 </style>

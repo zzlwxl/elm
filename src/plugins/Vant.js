@@ -27,8 +27,16 @@ import {
     Card,
     List,
     Tag,
-    Rate
+    Rate,
+    Divider,
+    Popup,
+    Tab,
+    Tabs,
 } from 'vant';
+Vue.use(Tabs)
+Vue.use(Tab)
+Vue.use(Popup)
+Vue.use(Divider)
 Vue.use(Rate)
 Vue.use(Tag)
 Vue.use(List)

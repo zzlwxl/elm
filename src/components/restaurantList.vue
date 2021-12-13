@@ -2,13 +2,14 @@
   <div>
     <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoadRestaurants(offset, limit)">
       <van-cell v-for="(item, index) in restaurantsAll" :key="index">
-        <van-card :price="item.float_minimum_order_amount + '起送/' + item.piecewise_agent_fee.tips" :desc="'营业'+item.opening_hours" :title="item.name" :thumb="'http://item.wangxuelong.vip:8001/img/' + item.image_path">>
+        <van-card @click="restaurantInfo(item.id)" :price="item.float_minimum_order_amount + '起送/' + item.piecewise_agent_fee.tips" :desc="'营业' + item.opening_hours" :title="item.name" :thumb="'http://item.wangxuelong.vip:8001/img/' + item.image_path"
+          >
           <template #tags>
             <van-tag plain type="danger">品牌</van-tag>
             <div class="starClass">
-              <van-rate  gutter="1px" :readonly="true" color="#ffd21e" void-color="#c8c9cc" size="10px" v-model="item.rating" allow-half void-icon="star" />
-            <span>{{item.rating}}</span>
-           <span class="orderNumClass">月售{{item.rating_count}}单</span>
+              <van-rate gutter="1px" :readonly="true" color="#ffd21e" void-color="#c8c9cc" size="10px" v-model="item.rating" allow-half void-icon="star" />
+              <span>{{ item.rating }}</span>
+              <span class="orderNumClass">月售{{ item.rating_count }}单</span>
             </div>
           </template>
           <template #footer>
@@ -31,11 +32,11 @@
 </template>
 
 <script>
-import { getRestaurants } from '@/API/getData.js'
+import { getRestaurants, requestGet } from '@/API/getData.js'
 import { mapState, mapMutations } from 'vuex'
 export default {
   props: [
-    // 'lltude'
+    'obj'
   ],
   data() {
     return {
@@ -56,7 +57,11 @@ export default {
   methods: {
     //按需请求数据
     async onLoadRestaurants(offset, limit) {
-      await getRestaurants(this.latitude, this.longitude, offset, limit).then((item) => {
+      await requestGet(this.obj.url, {
+        obj:this.obj.objData,
+        offset,
+        limit,
+      }).then((item) => {
         this.restaurants = Array(item.data)[0]
         //下一次请求的起点
         this.offset += limit
@@ -68,9 +73,12 @@ export default {
         }
         //加载完成后追加到总列表
         this.restaurantsAll.push(...this.restaurants)
-        console.log(this.restaurantsAll)
       })
+        console.log(this.restaurantsAll)
     },
+    restaurantInfo(id){
+      this.$router.push('/shop?geohash='+this.latitude+','+this.longitude+'&id='+id)
+    }
   },
 }
 </script>
@@ -120,20 +128,20 @@ export default {
   height: 23px;
 }
 .fzsClass {
-    box-sizing: border-box;
-    font-size: 12px;
+  box-sizing: border-box;
+  font-size: 12px;
   margin-left: 1px;
   color: rgb(70, 182, 242);
   border: 1px solid rgb(70, 182, 242);
 }
 .fzs1Class {
-    margin-left: 1px;
+  margin-left: 1px;
   color: rgb(255, 255, 255);
-    border: 1px solid rgb(70, 182, 242);
+  border: 1px solid rgb(70, 182, 242);
   background-color: rgb(70, 182, 242);
 }
-.starClass{
-    position: absolute;
+.starClass {
+  position: absolute;
   top: 40px;
   bottom: 0px;
   left: 0px;
@@ -141,58 +149,58 @@ export default {
   width: 200px;
   height: 24px;
 }
-.starClass span{
-    margin-left: 5px;
-    color: #f4b700;
+.starClass span {
+  margin-left: 5px;
+  color: #f4b700;
 }
-.starClass .orderNumClass{
-    color: rgb(155, 155, 155);
+.starClass .orderNumClass {
+  color: rgb(155, 155, 155);
 }
-.van-sidebar-item__info{
-    background-color: rgb(70, 182, 242);
+.van-sidebar-item__info {
+  background-color: rgb(70, 182, 242);
 }
 .van-info {
-    top: -2px;
-    right: -7px;
+  top: -2px;
+  right: -7px;
 }
 .van-dropdown-menu__title--active {
-color:rgb(70, 182, 242);
+  color: rgb(70, 182, 242);
 }
 .van-sidebar-item--select::before {
-    background-color: rgb(70, 182, 242);
+  background-color: rgb(70, 182, 242);
 }
 .van-card__price-integer {
-    font-size: -3px;
-    color: rgb(155, 155, 155);
+  font-size: -3px;
+  color: rgb(155, 155, 155);
 }
 .van-card__price {
-    color: rgb(155, 155, 155);
-    font-size: -3px;
+  color: rgb(155, 155, 155);
+  font-size: -3px;
 }
-.van-card__title{
-    margin-left: 42px;
-    font-size: 15px;
+.van-card__title {
+  margin-left: 42px;
+  font-size: 15px;
 }
 .van-card__price-integer {
-    font-size: 12px;
+  font-size: 12px;
 }
 .van-tag--danger.van-tag--plain {
-    top: -39px;
-    right: -37px;
-    bottom: 41px;
-    left: 0px;
-    border: 1px solid #ffcd38;
-    font-size: 15px;
-    color: #000000;
-    background-color: #f4b700;
+  top: -39px;
+  right: -37px;
+  bottom: 41px;
+  left: 0px;
+  border: 1px solid #ffcd38;
+  font-size: 15px;
+  color: #000000;
+  background-color: #f4b700;
 }
-.van-card{
-    padding: 8px -2px;
+.van-card {
+  padding: 8px -2px;
 }
-.van-cell{
-    padding: 10px 0px;
+.van-cell {
+  padding: 10px 0px;
 }
 .van-grid-item__icon {
-    font-size: 46px;
+  font-size: 46px;
 }
 </style>
