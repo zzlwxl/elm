@@ -35,6 +35,7 @@
 <script>
 import {mapState,mapMutations} from 'vuex'
 import RestaurantList from '@/components/RestaurantList.vue'
+import {getHttpFoodItemList} from '@/service/getData.js'
 export default {
   components:{
     RestaurantList
@@ -74,7 +75,7 @@ export default {
   },
   methods: {
     async getFoodEntryList() {
-      const { data } = await this.$http.get('/shopping/v2/restaurant/category', { latitude: this.latitude, longitude: this.latitude })
+      const { data } = await getHttpFoodItemList(this.latitude,this.latitude)
       console.log(data)
       this.entryItems=((data.map((item) => {
           return {

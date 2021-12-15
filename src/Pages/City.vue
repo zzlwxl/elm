@@ -7,15 +7,25 @@
         <div @click="onSearch">搜索</div>
       </template>
     </van-search>
-    <van-cell v-for="(item, index) in searchAddressList" :key="index" icon="location-o" :label="item.address" :title="item.name" @click="subAddress(index, { latitude: item.latitude + '', longitude: item.longitude + '' })" />
+    <van-cell v-for="(item, index) in searchAddressList" 
+    :key="'key'+index" icon="location-o" 
+    :label="item.address" 
+    :title="item.name" 
+    @click="subAddress(index, { latitude: item.latitude + '', longitude: item.longitude + '' })" />
     <div v-show="isShowHistory" class="historyClass">历史记录</div>
-    <van-cell v-show="isShowHistory" v-for="(item, index) in hisorySerachAddressList" :key="index" icon="location-o" :label="item.address" :title="item.name" @click="subAddress(index, { latitude: item.latitude + '', longitude: item.longitude + '' })" />
+    <van-cell v-show="isShowHistory" v-for="(item, index) in hisorySerachAddressList" 
+    :key="index" icon="location-o" 
+    :label="item.address" 
+    :title="item.name" 
+    @click="subAddress(index, { latitude: item.latitude + '', longitude: item.longitude + '' })" />
     <van-button v-show="isShowHistory" @click="clearHistory" block>清除所有</van-button>
   </div>
 </template>
 
 <script>
 import { getStore, setStore ,removeStore} from '@/utils/utils.js'
+import {getHttpCityName,getHttpSearchCityName} from '@/service/getData.js'
+import {searchFoodsPage} from '@/router/routerStr.js'
 export default {
   props: ['id'],
   data() {
@@ -45,7 +55,7 @@ export default {
       console.log(this.hisorySerachAddressList)
     },
     async getCityName() {
-      const { data, status } = await this.$http.get(`/v1/cities/${this.id}`)
+      const { data, status } = await getHttpCityName(this.id)
       if (status !== 200) {
         return this.$toast('获取城市名失败')
       } else {
@@ -53,13 +63,18 @@ export default {
       }
     },
     //搜索城市里具体地址
-    async onSearch() {
-      const { data, status } = await this.$http.get(`/v1/pois?city_id=${this.id}&keyword=${this.inputAddress}&type=search`)
+    async onSearch() { 
+      if(!this.inputAddress===''){
+      const { data, status } = await getHttpSearchCityName(this.id,this.inputAddress)
       if (status !== 200) {
         return this.$toast('搜索失败')
       } else {
+        this.isShowHistory=false
         this.searchAddressList = data
         console.log(this.searchAddressList)
+      }
+      }else{
+        alert('请输入内容')
       }
     },
     subAddress(index, geohash) {
@@ -87,7 +102,7 @@ export default {
       }
       //把已经追加、添加的列表重新记录到本地
       setStore('placeHistory', JSON.stringify(this.hisorySerachAddressList))
-      this.$router.push({ path: `/msite?geohash=${geohash.latitude},${geohash.longitude}` })
+      this.$router.push(searchFoodsPage(geohash.latitude,geohash.longitude))
     },
     clearInput() {
       this.searchAddressList = []

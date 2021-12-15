@@ -16,12 +16,12 @@
       </van-swipe-item>
     </van-swipe>
     <div class="fjShopClass">
-    <van-icon  name="shop-o" size="12" />
-    <span >附近商家</span>
+      <van-icon name="shop-o" size="12" />
+      <span>附近商家</span>
     </div>
     <van-divider />
-    <restaurantList :obj="obj" ></restaurantList>
-   <Tabbar></Tabbar>
+    <restaurantList :obj="obj"></restaurantList>
+    <Tabbar></Tabbar>
   </div>
 </template>
 
@@ -29,11 +29,13 @@
 import { mapState, mapMutations } from 'vuex'
 import RestaurantList from '@/components/RestaurantList.vue'
 import Tabbar from '@/components/Tabbar.vue'
+import {getHttpLLGetLocal,getHttpFoodCate} from '@/service/getData.js'
+import {searchPage,homePage} from '@/router/routerStr.js'
 export default {
-  name:'Msite',
-  components:{
+  name: 'Msite',
+  components: {
     Tabbar,
-    RestaurantList
+    RestaurantList,
   },
   data() {
     return {
@@ -44,38 +46,51 @@ export default {
     }
   },
   async created() {
-    //接收新坐标
-    if (this.$route.query.geohash) {
-      this.lltude = this.$route.query.geohash.split(',')
-      //记录当前经纬度
-      this.RECORD_ADDRESS(this.lltude)
-      this.RECORD_GEOHASH(this.lltude)
-      this.getUserLocation()
-    } else {
-      //默认坐标
-      this.getUserLocation()
-      this.lltude=[this.latitude,this.longitude]
-    }
-    this.getFoodList()
-    
+    this.init()
+  },
+  watch: {
+    '$route.query.geohash'(newVal , oldVal){
+
+      // handler: function (geohash) {
+        this.$route.query.geohash && this.init()
+        console.log("init ......change")
+      // },
+      // immediate: true,
+    },
   },
   computed: {
-    ...mapState(['latitude', 'longitude','geohash']),
-    obj(){
-      return{
-        url:'/shopping/restaurants',
-        objData:{
-          latitude:this.latitude,
-          longitude:this.longitude
-        }
+    ...mapState(['latitude', 'longitude', 'geohash']),
+    obj() {
+      return {
+        url: '/shopping/restaurants',
+        objData: {
+          latitude: this.latitude,
+          longitude: this.longitude,
+        },
       }
-    }
+    },
   },
   methods: {
-    ...mapMutations(['RECORD_ADDRESS','RECORD_GEOHASH']),
+    init() {
+      console.log('调用了一次init-----------------------------')
+      //接收新坐标
+      if (this.$route.query.geohash) {
+        this.lltude = this.$route.query.geohash.split(',')
+        //记录当前经纬度
+        this.RECORD_ADDRESS(this.lltude)
+        this.RECORD_GEOHASH(this.lltude)
+        this.getUserLocation()
+      } else {
+        //默认坐标
+        this.getUserLocation()
+        this.lltude = [this.latitude, this.longitude]
+      }
+      this.getFoodList()
+    },
+    ...mapMutations(['RECORD_ADDRESS', 'RECORD_GEOHASH']),
     // 根据经纬度获取详细定位
     async getUserLocation() {
-      const { data, status } = await this.$http.get(`/v2/pois/${this.latitude},${this.longitude}`)
+      const { data, status } = await getHttpLLGetLocal(this.latitude,this.longitude)
       if (status !== 200) {
         return this.$toast('获取详细定位失败')
       } else {
@@ -83,10 +98,10 @@ export default {
       }
     },
     goCityList() {
-      this.$router.push('/home')
+      this.$router.push(homePage)
     },
     async getFoodList() {
-      const { data } = await this.$http.get('/v2/index_entry')
+      const { data } = await getHttpFoodCate()
       const arr = []
       let minArr = []
       data.forEach((item) => {
@@ -103,15 +118,15 @@ export default {
       console.log(1)
       console.log(this.foodEntryList)
     },
-    goSearch(){
-      this.$router.push('/search')
-    }
+    goSearch() {
+      this.$router.push(searchPage)
+    },
   },
 }
 </script>
 <style lang="less" scoped>
-.fjShopClass{
-  position:absolute;
+.fjShopClass {
+  position: absolute;
   top: 245px;
   bottom: 0;
   left: 10px;

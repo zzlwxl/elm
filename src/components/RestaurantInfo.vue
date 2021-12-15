@@ -32,7 +32,8 @@
       <div id="nav" class="foodCageClass">
         <ul>
           <li id="top" v-for="(item, index) in foodItem" :key="index">
-            <van-button id="btnLiId" class="btnLiClass" type="default">{{ item.name }}</van-button>
+            <van-button v-if="index==0" id="btnLiId" class="on" type="default">{{ item.name }}</van-button>
+            <van-button v-else id="btnLiId" class="btnLiClass" type="default">{{ item.name }}</van-button>
           </li>
         </ul>
       </div>
@@ -43,8 +44,8 @@
           <li v-for="(foodsData, index) in foodItem" :key="index">
             <van-divider content-position="left">{{ foodsData.name }}</van-divider>
             <!-- 食物列表 -->
-            <div v-for="(foodsList ,index) in foodsData.foods" :key="index">
-              <van-card num="2" price="2.00" desc="描述信息" :title="foodsList.name" :thumb="'http://item.wangxuelong.vip:8001/img/' + imgList[Math.floor(Math.random()*3)]">
+            <div v-for="(foodsList, index) in foodsData.foods" :key="index">
+              <van-card num="2" price="2.00" desc="描述信息" :title="foodsList.name" :thumb="'http://item.wangxuelong.vip:8001/img/' + imgList[Math.floor(Math.random() * 3)]">
                 <template #tags>
                   <!-- <van-tag plain type="danger">标签</van-tag> -->
                 </template>
@@ -64,93 +65,7 @@
 </template>
 
 <script>
-import { getRestaurants, requestGet } from '@/API/getData.js'
-window.addEventListener('load', function () {
-  var wrapScrollNode = document.querySelector('#wrap')
-  var navScrollNode = document.querySelector('#nav')
-  var toTop = document.querySelector('#toTop')
-  var allfoodsLi = document.querySelectorAll('#wrap li') //文档
-  var allNavLi = document.querySelectorAll('#nav li #btnLiId') //导航
-  allNavLi[0].className = 'on'
-  // 滑动变化li
-  ;(function () {
-    wrapScrollNode.onscroll = function () {
-      //获取所有食物列表滚动条高度
-      var scrollLineHeight = wrapScrollNode.scrollTop
-      //获取所有食物列表可视区高度
-      var canViewHeight = wrapScrollNode.clientHeight
-      // 如果滚动条的高度大于可视区的高度就显示返回顶部按钮
-      if (scrollLineHeight > canViewHeight) {
-        toTop.className = 'topBtnClass'
-      } else {
-        toTop.className = 'topBtnNoneClass'
-      }
-      for (var i = 0; i < allfoodsLi.length; i++) {
-        // 如果 所有食物列表滚动条 高度 大于所有食物列表中某一个食物的上方的偏移量，就显示这个食物的分类
-        if (scrollLineHeight >= allfoodsLi[i].offsetTop) {
-          for (var j = 0; j < allfoodsLi.length; j++) {
-            //排他
-            allNavLi[j].className = 'btnLiClass'
-          }
-          allNavLi[i].className = 'on'
-          //所有食物列表滑动到某一个食物列表上时，
-          // 就拿这个食物列表的下标去拿对应下标的 食物分类 的上方偏移量，
-          // 然后再拿着偏移量去改变 所有食物分类 的上方偏移量
-          navScrollNode.scrollTo({
-            top: allNavLi[i].offsetTop,
-            behavior: 'smooth',
-          })
-        }
-      }
-    }
-  })()
-  ;(function () {
-    // 点击li滑动食物列表
-    for (var i = 0; i < allNavLi.length; i++) {
-      allNavLi[i].index = i //记住每一个食物分类导航的下标，因为下面代码时异步的
-      allNavLi[i].addEventListener('click', function () {
-        for (var j = 0; j < allNavLi.length; j++) {
-          //排他
-          allNavLi[j].className = 'btnLiClass'
-        }
-        allNavLi[this.index].className = 'on'
-        for (var j = 0; j < allNavLi.length; j++) {
-          wrapScrollNode.scrollTo({
-            // 根据点击的allNavLi的下标获取这个下标对应的 食品列表 的上方偏移量来更改 所有食品列表 的上方偏移量
-            top: allfoodsLi[this.index].offsetTop,
-            behavior: 'smooth',
-          })
-        }
-      })
-    }
-  })()
-  //点击按钮返回顶部
-  ;(function () {
-    toTop.addEventListener('click', function () {
-      for (var j = 0; j < allNavLi.length; j++) {
-        //排他
-        allNavLi[j].className = 'btnLiClass'
-      }
-      allNavLi[0].className = 'on'
-      animate(navScrollNode, 0)
-      function animate(obj, target) {
-        clearInterval(obj.timer)
-        obj.timer = setInterval(function () {
-          //把步长值改为整数（往上取整），不然小数会出现走不到目标位置的问题
-          var step = (target - obj.scrollTop) / 10
-          //当步长大于0就往上取整（即取大值的整数），小于0就往下取整（即取小值的整负数）
-          step = step > 0 ? Math.ceil(step) : Math.floor(step)
-          if (obj.scrollTop == target) {
-            clearInterval(obj.timer)
-          }
-          obj.scrollTop = obj.scrollTop + step
-        }, 0)
-      }
-      //导航列表返回后，点击一下第一个导航
-      allNavLi[0].click()
-    })
-  })()
-})
+import {getHttpFoodList,getHttpRestaurantsHeader} from '@/service/getData.js'
 export default {
   data() {
     return {
@@ -159,31 +74,114 @@ export default {
       item: {},
       tips: '',
       foodItem: [],
-      imgList:[
-      '17d60c1c8d639884.png',
-      '17d60c2527f39885.png',
-      '17d60c4f8d339886.jpeg'
-    ]
+      imgList: ['17d60c1c8d639884.png', '17d60c2527f39885.png', '17d60c4f8d339886.jpeg'],
     }
   },
   methods: {
     async getRestaurantInfo() {
-      const { data } = await requestGet('/shopping/restaurant/' + this.id)
+      const { data } = await getHttpRestaurantsHeader(this.id)
       this.item = data
       this.tips = this.item.piecewise_agent_fee.tips
     },
     async getFoodsList() {
-      const { data } = await requestGet('/shopping/v2/menu?restaurant_id=' + this.id)
+      const {data}= await getHttpFoodList(this.id)
       this.foodItem = data
-      console.log(this.foodItem)
     },
+    loadFoodsList() {
+        console.log('2=================')
+        var wrapScrollNode = document.querySelector('#wrap')
+        var navScrollNode = document.querySelector('#nav')
+        var toTop = document.querySelector('#toTop')
+        var allfoodsLi = document.querySelectorAll('#wrap li') //文档
+        var allNavLi = document.querySelectorAll('#nav li #btnLiId') //导航
+        // 滑动变化li
+        ;(function () {
+          wrapScrollNode.onscroll = function () {
+            //获取所有食物列表滚动条高度
+            var scrollLineHeight = wrapScrollNode.scrollTop
+            //获取所有食物列表可视区高度
+            var canViewHeight = wrapScrollNode.clientHeight
+            // 如果滚动条的高度大于可视区的高度就显示返回顶部按钮
+            if (scrollLineHeight > canViewHeight) {
+              toTop.className = 'topBtnClass'
+            } else {
+              toTop.className = 'topBtnNoneClass'
+            }
+            for (var i = 0; i < allfoodsLi.length; i++) {
+              // 如果 所有食物列表滚动条 高度 大于所有食物列表中某一个食物的上方的偏移量，就显示这个食物的分类
+              if (scrollLineHeight >= allfoodsLi[i].offsetTop) {
+                for (var j = 0; j < allfoodsLi.length; j++) {
+                  //排他
+                  allNavLi[j].className = 'btnLiClass'
+                }
+                allNavLi[i].className = 'on'
+                //所有食物列表滑动到某一个食物列表上时，
+                // 就拿这个食物列表的下标去拿对应下标的 食物分类 的上方偏移量，
+                // 然后再拿着偏移量去改变 所有食物分类 的上方偏移量
+                navScrollNode.scrollTo({
+                  top: allNavLi[i].offsetTop,
+                  behavior: 'smooth',
+                })
+              }
+            }
+          }
+        })()
+        ;(function () {
+          // 点击li滑动食物列表
+          for (var i = 0; i < allNavLi.length; i++) {
+            allNavLi[i].index = i //记住每一个食物分类导航的下标，因为下面代码时异步的
+            allNavLi[i].addEventListener('click', function () {
+              for (var j = 0; j < allNavLi.length; j++) {
+                //排他
+                allNavLi[j].className = 'btnLiClass'
+              }
+              allNavLi[this.index].className = 'on'
+              for (var j = 0; j < allNavLi.length; j++) {
+                wrapScrollNode.scrollTo({
+                  // 根据点击的allNavLi的下标获取这个下标对应的 食品列表 的上方偏移量来更改 所有食品列表 的上方偏移量
+                  top: allfoodsLi[this.index].offsetTop,
+                  behavior: 'smooth',
+                })
+              }
+            })
+          }
+        })()
+        //点击按钮返回顶部
+        ;(function () {
+          toTop.addEventListener('click', function () {
+            for (var j = 0; j < allNavLi.length; j++) {
+              //排他
+              allNavLi[j].className = 'btnLiClass'
+            }
+            allNavLi[0].className = 'on'
+            animate(navScrollNode, 0)
+            function animate(obj, target) {
+              clearInterval(obj.timer)
+              obj.timer = setInterval(function () {
+                //把步长值改为整数（往上取整），不然小数会出现走不到目标位置的问题
+                var step = (target - obj.scrollTop) / 10
+                //当步长大于0就往上取整（即取大值的整数），小于0就往下取整（即取小值的整负数）
+                step = step > 0 ? Math.ceil(step) : Math.floor(step)
+                if (obj.scrollTop == target) {
+                  clearInterval(obj.timer)
+                }
+                obj.scrollTop = obj.scrollTop + step
+              }, 0)
+            }
+            //导航列表返回后，点击一下第一个导航
+            allNavLi[0].click()
+          })
+        })()
+    },
+  },
+  updated(){
+    this.loadFoodsList()
   },
   created() {
     this.id = this.$route.query.id
     console.log(this.id)
     this.getRestaurantInfo()
     this.getFoodsList()
-    
   },
 }
 </script>
@@ -214,6 +212,7 @@ export default {
   height: 65px;
   background-color: rgb(70, 182, 242);
 }
+
 .topBtnNoneClass {
   display: none;
 }

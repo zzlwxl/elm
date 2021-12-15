@@ -2,8 +2,7 @@
   <div>
     <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoadRestaurants(offset, limit)">
       <van-cell v-for="(item, index) in restaurantsAll" :key="index">
-        <van-card @click="restaurantInfo(item.id)" :price="item.float_minimum_order_amount + '起送/' + item.piecewise_agent_fee.tips" :desc="'营业' + item.opening_hours" :title="item.name" :thumb="'http://item.wangxuelong.vip:8001/img/' + item.image_path"
-          >
+        <van-card @click="restaurantInfo(item.id)" :price="item.float_minimum_order_amount + '起送/' + item.piecewise_agent_fee.tips" :desc="'营业' + item.opening_hours" :title="item.name" :thumb="'http://item.wangxuelong.vip:8001/img/' + item.image_path">
           <template #tags>
             <van-tag plain type="danger">品牌</van-tag>
             <div class="starClass">
@@ -32,12 +31,11 @@
 </template>
 
 <script>
-import { getRestaurants, requestGet } from '@/API/getData.js'
 import { mapState, mapMutations } from 'vuex'
+import {getHttpLocalRestaurants} from '@/service/getData.js'
+import {restaurantInfoPage} from '@/router/routerStr.js'
 export default {
-  props: [
-    'obj'
-  ],
+  props: ['obj'],
   data() {
     return {
       restaurantsAll: [], //商铺总列表
@@ -49,20 +47,23 @@ export default {
     }
   },
   created() {
-    this.onLoadRestaurants(this.offset, this.limit)
   },
   computed: {
     ...mapState(['latitude', 'longitude']),
   },
+  watch: {
+    '$store.state.geohash'(newval, olval) {
+      console.log("gohash...change")
+      this.onLoadRestaurants(this.offset, this.limit)
+    },
+  },
   methods: {
     //按需请求数据
     async onLoadRestaurants(offset, limit) {
-      await requestGet(this.obj.url, {
-        obj:this.obj.objData,
-        offset,
-        limit,
-      }).then((item) => {
-        this.restaurants = Array(item.data)[0]
+      console.log('调用了一次onLoadRestaurants--------------------------------------')
+      const {data}=await getHttpLocalRestaurants(this.obj.objData,offset,limit)
+      console.log(data)
+      this.restaurants = Array(data)[0]
         //下一次请求的起点
         this.offset += limit
         this.loading = false //加载结束
@@ -73,12 +74,11 @@ export default {
         }
         //加载完成后追加到总列表
         this.restaurantsAll.push(...this.restaurants)
-      })
-        console.log(this.restaurantsAll)
+      console.log(this.restaurantsAll)
     },
-    restaurantInfo(id){
-      this.$router.push('/shop?geohash='+this.latitude+','+this.longitude+'&id='+id)
-    }
+    restaurantInfo(id) {
+      this.$router.push(restaurantInfoPage(this.latitude,this.longitude,id))
+    },
   },
 }
 </script>
