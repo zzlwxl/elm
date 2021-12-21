@@ -9,7 +9,7 @@ import axios from 'axios'
 
 
 Vue.config.productionTip = false
-Vue.config.productionTip = false
+Vue.config.devtools = true;
 axios.defaults.baseURL='http://item.wangxuelong.vip:8001/'
 Vue.prototype.$http=axios
 new Vue({

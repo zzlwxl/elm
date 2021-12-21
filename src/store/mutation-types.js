@@ -1,2 +1,5 @@
 export const RECORD_ADDRESS = 'RECORD_ADDRESS'
 export const RECORD_GEOHASH = 'RECORD_GEOHASH'
+export const ADDCAR_LIST = 'ADDCAR_LIST'
+export const DELCAR_LIST = 'DELCAR_LIST'
+export const DELCARALL_LIST = 'DELCARALL_LIST'

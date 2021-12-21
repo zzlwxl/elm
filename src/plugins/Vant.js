@@ -32,7 +32,21 @@ import {
     Popup,
     Tab,
     Tabs,
+    GoodsAction, 
+    GoodsActionIcon, 
+    GoodsActionButton,
+    Dialog,
+    Sku,
+    RadioGroup, 
+    Radio
 } from 'vant';
+Vue.use(RadioGroup)
+Vue.use(Radio)
+Vue.use(Sku)
+Vue.use(Dialog)
+Vue.use(GoodsAction)
+Vue.use(GoodsActionIcon)
+Vue.use(GoodsActionButton)
 Vue.use(Tabs)
 Vue.use(Tab)
 Vue.use(Popup)
