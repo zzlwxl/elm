@@ -52,3 +52,19 @@ export const getHttpFoodItemList=(latitude,longitude)=>http('/shopping/v2/restau
  * 获取商家头部信息
  */
 export const getHttpRestaurantsHeader=(id)=>http('/shopping/restaurant/'+id)
+/**
+ * 获取商家评价信息
+ */
+export const getHttpRatings=(id)=>http(`/ugc/v2/restaurants/${id}/ratings/scores`)
+/**
+ * 获取评价分类
+ */
+export const getHttpRatingsTags=(id)=>http(`/ugc/v2/restaurants/${id}/ratings/tags`)
+/**
+ * 获取评价信息
+ */
+export const getHttpRatingsList=(restaurant_id,tag_name,offset,limit)=>http(`/ugc/v2/restaurants/${restaurant_id}/ratings`,{
+    tag_name:tag_name,
+    offset:offset,
+    limit:limit
+})

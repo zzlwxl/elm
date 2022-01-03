@@ -22,113 +22,169 @@
       </van-card>
     </div>
     <div class="routerFoodOrComm">
-      <van-tabs line-height="0px" line-width="0px" title-active-color="rgb(70, 182, 242)">
-        <van-tab title="标签 1"></van-tab>
-        <van-tab title="标签 2"></van-tab>
-      </van-tabs>
-    </div>
-    <div class="footer">
-      <div id="nav" class="foodCageClass">
-        <ul>
-          <li id="top" v-for="(item, index) in foodItem" :key="index">
-            <van-button v-if="index == 0" id="btnLiId" class="on" type="default">{{ item.name }}</van-button>
-            <van-button v-else id="btnLiId" class="btnLiClass" type="default">{{ item.name }}</van-button>
-          </li>
-        </ul>
-      </div>
-      <div class="foodClass" id="wrap">
-        <!-- 根据所有食物列表的滚动来变化食物分类列表 -->
-        <ul>
-          <!-- 分类标题 -->
-          <li v-for="(foodsData, index) in foodItem" :key="index">
-            <van-divider content-position="left">{{ foodsData.name }}</van-divider>
-            <!-- 食物列表 -->
-            <div v-for="(foodsList, index) in foodsData.foods" :key="index">
-              <van-card v-if="foodsList.specfoods[0].price" class="foodListClass" :desc="foodsList.description" :title="foodsList.name" :thumb="'http://item.wangxuelong.vip:8001/img/' + imgList[foodsList.specfoods[0].price % 3]">
-                <template #tags>
-                  <span class="tipsClass">{{ foodsList.tips }}</span>
-                  <br />
-                  <span v-if="foodsList.specfoods.length >= 2" class="priceClass">
-                    {{ '¥' + computedPrice(foodsList.specfoods) }}
-                    <span class="fontColorClass">起</span>
-                    <span class="addCarNumBoxClass">
-                      <AddCar @childChooseSpecs="chooseFoodDataFun" :foods="foodsList" :shopId="id"></AddCar>
-                    </span>
-                  </span>
-                  <span v-else class="priceClass"
-                    >{{ '¥' + foodsList.specfoods[0].price }}
-                    <span class="addCarNumBoxClass">
-                      <AddCar @childChooseFood="childChooseFoodFun" :foods="foodsList" :shopId="id"></AddCar>
-                    </span>
-                  </span>
-                </template>
-              </van-card>
+      <van-tabs line-height="0px" @click="clickCommentTab" v-model="active" line-width="0px" title-active-color="rgb(70, 182, 242)">
+        <van-tab title="商品">
+          <div class="footer">
+            <van-skeleton animate :row="25" :loading="loading">
+              <van-divider class="divider" />
+              <div id="nav" class="foodCageClass">
+                <ul>
+                  <li id="top" v-for="(item, index) in foodItem" :key="index">
+                    <van-button v-if="index == 0" id="btnLiId" class="on" type="default">{{ item.name }}</van-button>
+                    <van-button v-else id="btnLiId" class="btnLiClass" type="default">{{ item.name }}</van-button>
+                  </li>
+                </ul>
+              </div>
+              <div class="foodClass" id="wrap">
+                <!-- 根据所有食物列表的滚动来变化食物分类列表 -->
+                <ul>
+                  <!-- 分类标题 -->
+                  <li v-for="(foodsData, index) in foodItem" :key="index">
+                    <van-divider content-position="left">{{ foodsData.name }}</van-divider>
+                    <!-- 食物列表 -->
+                    <div v-for="(foodsList, index) in foodsData.foods" :key="index">
+                      <van-card v-if="foodsList.specfoods[0].price" class="foodListClass" :desc="foodsList.description" :title="foodsList.name" :thumb="'http://item.wangxuelong.vip:8001/img/' + imgList[foodsList.specfoods[0].price % 3]">
+                        <template #tags>
+                          <span class="tipsClass">{{ foodsList.tips }}</span>
+                          <br />
+                          <span v-if="foodsList.specfoods.length >= 2" class="priceClass">
+                            {{ '¥' + computedPrice(foodsList.specfoods) }}
+                            <span class="fontColorClass">起</span>
+                            <span class="addCarNumBoxClass">
+                              <AddCar @childChooseSpecs="chooseFoodDataFun" :foods="foodsList" :shopId="id"></AddCar>
+                            </span>
+                          </span>
+                          <span v-else class="priceClass"
+                            >{{ '¥' + foodsList.specfoods[0].price }}
+                            <span class="addCarNumBoxClass">
+                              <AddCar @childChooseFood="childChooseFoodFun" :foods="foodsList" :shopId="id"></AddCar>
+                            </span>
+                          </span>
+                        </template>
+                      </van-card>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </van-skeleton>
+          </div>
+          <van-goods-action>
+            <van-goods-action-icon @click="showCar" icon="cart-o" text="购物车" :badge="thisShopAllFoodNum" />
+            <div class="orderPrice">
+              <div>总价:{{ thisShopAllPrice }}元</div>
+              <div>{{ tips }}</div>
             </div>
-          </li>
-        </ul>
-      </div>
+            <van-goods-action-button class="actionOrder" text="立即购买" @click="onClickButton" />
+          </van-goods-action>
+
+          <van-dialog v-model="showSpcesDialog" title="选择规格" cancelButtonText="关闭" :showConfirmButton="false" show-cancel-button>
+            <van-radio-group class="spcesDialogClass" v-model="radio">
+              <div class="spcesListClass" v-for="(specsData, index) in chooseFoodData" :key="index" :name="index">
+                {{ specsData.specs_name }}
+                <div class="van-hairline--top"></div>
+                <span class="priceClass"
+                  >{{ '¥' + specsData.price }}
+                  <span class="spcesAddClass">
+                    <button v-if="carNum(index)" @click="chooseDelBtn(index)" class="addCarBtnClass"><van-icon name="minus" /></button>
+                    <span v-if="carNum(index)" class="addCarNum">{{ carNum(index) }}</span>
+                    <button @click="chooseAddBtn(index)" class="addCarBtnClass"><van-icon name="plus" /></button>
+                  </span>
+                </span>
+              </div>
+            </van-radio-group>
+          </van-dialog>
+          <van-popup closeable :safe-area-inset-bottom="true" class="carFooter" v-model="showCarDialog" position="bottom">
+            <van-icon class="clearAll" @click="clearAll" name="delete-o">清空购物车</van-icon>
+            <van-radio-group class="spcesDialogClass" v-model="radio">
+              <div class="spcesListClass" v-for="(foodRow, index) in thisTimeCarList" :key="index" :name="index">
+                <div class="thisTimeCarBox">
+                  <div class="food">{{ foodRow.name }}</div>
+                  <span v-if="foodRow.specs.length" class="food">{{ foodRow.specs[0].value }}</span>
+                  <span v-else class="food">默认</span>
+                  <span class="priceClass">
+                    {{ '¥' + foodRow.price }}
+                    <span class="spcesAddClass">
+                      <button v-if="foodRow.num" @click="delCarList(foodRow.cate_id, foodRow.item_id, foodRow.name, foodRow.food_id, foodRow.price, foodRow.specs)" class="addCarBtnClass"><van-icon name="minus" /></button>
+                      <span v-if="foodRow.num" class="addCarNum">{{ foodRow.num }}</span>
+                      <button @click="addCarList(foodRow.cate_id, foodRow.item_id, foodRow.name, foodRow.food_id, foodRow.price, foodRow.specs), testData(foodRow)" class="addCarBtnClass"><van-icon name="plus" /></button>
+                    </span>
+                  </span>
+                </div>
+              </div>
+            </van-radio-group>
+            <van-goods-action>
+              <van-goods-action-icon icon="cart-o" text="购物车" :badge="thisShopAllFoodNum" />
+              <div class="orderPrice">
+                <div>总价:{{ thisShopAllPrice }}元</div>
+                <div>{{ tips }}</div>
+              </div>
+              <van-goods-action-button class="actionOrder" text="立即购买" @click="onClickButton" />
+            </van-goods-action>
+          </van-popup>
+        </van-tab>
+        <van-tab title="评价">
+          <div class="head">
+            <section class="headLeft">
+              <div class="rateData">
+                <section>{{ Math.floor(ratings.overall_score * 10) / 10 }}</section>
+                <section>综合评价</section>
+                <section>高于周边商家{{ Math.floor(ratings.compare_rating * 100)}}%</section>
+              </div>
+            </section>
+            <section class="headRight">
+              <div class="rateData">
+                <section>
+                  服务态度<van-rate class="star" v-model="ratings.service_score" :size="12" color="#ffd21e" :readonly="true" allow-half void-icon="star" void-color="#eee" /><span>{{ Math.floor(ratings.service_score * 10) / 10 }}</span>
+                </section>
+                <section>
+                  菜品时间<van-rate class="star" v-model="ratings.food_score" :size="12" color="#ffd21e" :readonly="true" allow-half void-icon="star" void-color="#eee" /><span>{{ Math.floor(ratings.food_score * 10) / 10 }}</span>
+                </section>
+                <section>
+                  送达时间<span>{{ ratings.deliver_time }}分钟</span>
+                </section>
+              </div>
+            </section>
+          </div>
+          <div class="tabCommentBox">
+            <div @click="tabClickFun(item.name, index)" v-for="(item, index) in ratingsTags" :key="index" id="tabId" class="tabUp">{{ item.name + '(' + item.count + ')' }}</div>
+          </div>
+          <van-list v-model="loadingComment" :finished="finished" finished-text="没有更多了" @load="onLoad(offset, limit)">
+            <van-cell v-for="(item, index) in commentListAll" :key="index">
+              <div class="commentListBox">
+                <div class="commentBox">
+                  <section class="userImgBox">
+                    <img class="userImg" :src="'http://item.wangxuelong.vip:8001/img/' + imgList[Math.round(Math.random() * 2)]" />
+                  </section>
+                  <section class="userNameBox">
+                    <span>{{ item.username }}</span>
+                    <span><van-rate allow-half :gutter="8" class="commentStar" v-model="item.rating_star" :size="5" color="#ffd21e" void-icon="star" void-color="#eee" /></span>
+                  </section>
+                  <section class="dateBox">
+                    <span>{{ item.rated_at }}</span>
+                  </section>
+                  <section class="commentImgBox">
+                    <span v-for="(item, index) in item.item_ratings" :key="index">
+                      <img class="commentImg" v-if="item.image_hash !== ''" :src="'http://item.wangxuelong.vip:8001/img/' + imgList[Math.round(Math.random() * 2)]" />
+                    </span>
+                  </section>
+                  <section class="imgTabBox">
+                    <span v-for="(item, index) in item.item_ratings" :key="index">{{ item.food_name }}</span>
+                  </section>
+                </div>
+              </div>
+            </van-cell>
+          </van-list>
+        </van-tab>
+      </van-tabs>
     </div>
     <div id="toTop" class="topBtnNoneClass">
       <van-icon color="rgb(70, 182, 242)" size="30" name="upgrade" />
     </div>
-    <van-goods-action>
-      <van-goods-action-icon @click="showCar" icon="cart-o" text="购物车" :badge="thisShopAllFoodNum" />
-      <div class="orderPrice">
-        <div>总价:{{thisShopAllPrice}}元</div>
-        <div>{{ tips }}</div>
-      </div>
-      <van-goods-action-button class="actionOrder" text="立即购买" @click="onClickButton" />
-    </van-goods-action>
-
-    <van-dialog v-model="showSpcesDialog" title="选择规格" cancelButtonText="关闭" :showConfirmButton="false" show-cancel-button>
-      <van-radio-group class="spcesDialogClass" v-model="radio">
-        <div class="spcesListClass" v-for="(specsData, index) in chooseFoodData" :key="index" :name="index">
-          {{ specsData.specs_name }}
-          <div class="van-hairline--top"></div>
-          <span class="priceClass"
-            >{{ '¥' + specsData.price }}
-            <span class="spcesAddClass">
-              <button v-if="carNum(index)" @click="chooseDelBtn(index)" class="addCarBtnClass"><van-icon name="minus" /></button>
-              <span v-if="carNum(index)" class="addCarNum">{{ carNum(index) }}</span>
-              <button @click="chooseAddBtn(index)" class="addCarBtnClass"><van-icon name="plus" /></button>
-            </span>
-          </span>
-        </div>
-      </van-radio-group>
-    </van-dialog>
-    <van-popup closeable :safe-area-inset-bottom="true" class="carFooter" v-model="showCarDialog" position="bottom">
-      <van-icon class="clearAll" @click="clearAll" name="delete-o">清空购物车</van-icon>
-      <van-radio-group class="spcesDialogClass" v-model="radio">
-        <div class="spcesListClass" v-for="(foodRow, index) in thisTimeCarList" :key="index" :name="index">
-          <div class="thisTimeCarBox">
-            <div class="food">{{ foodRow.name }}</div>
-            <span v-if="foodRow.specs.length" class="food">{{ foodRow.specs[0].value }}</span>
-            <span v-else class="food">默认</span>
-          <span class="priceClass">
-            {{ '¥' + foodRow.price }}
-            <span class="spcesAddClass">
-              <button v-if="foodRow.num" @click="delCarList(foodRow.cate_id,foodRow.item_id,foodRow.name,foodRow.food_id,foodRow.price,foodRow.specs)" class="addCarBtnClass"><van-icon name="minus" /></button>
-              <span v-if="foodRow.num" class="addCarNum">{{foodRow.num }}</span>
-              <button @click="addCarList(foodRow.cate_id,foodRow.item_id,foodRow.name,foodRow.food_id,foodRow.price,foodRow.specs),testData(foodRow)" class="addCarBtnClass"><van-icon name="plus" /></button>
-            </span>
-          </span>
-        </div>
-        </div>
-      </van-radio-group>
-      <van-goods-action>
-        <van-goods-action-icon icon="cart-o" text="购物车" :badge="thisShopAllFoodNum" />
-        <div class="orderPrice">
-          <div>总价:{{thisShopAllPrice}}元</div>
-          <div>{{ tips }}</div>
-        </div>
-        <van-goods-action-button class="actionOrder" text="立即购买" @click="onClickButton" />
-      </van-goods-action>
-    </van-popup>
   </div>
 </template>
 
 <script>
-import { getHttpFoodList, getHttpRestaurantsHeader } from '@/service/getData.js'
+import { getHttpFoodList, getHttpRestaurantsHeader, getHttpRatings, getHttpRatingsTags, getHttpRatingsList } from '@/service/getData.js'
 import { mapState, mapMutations } from 'vuex'
 import AddCar from '@/Pages/AddCar.vue'
 export default {
@@ -151,8 +207,19 @@ export default {
       showCarDialog: false, //是否展示购物车
       watchFlag: false, //首次进入侦听器不工作
       thisTimeCarList: [],
-      thisShopAllPrice:0,//当前商家购物车总价格
-      thisShopAllFoodNum:0,//当前商家购物车总数量
+      thisShopAllPrice: 0, //当前商家购物车总价格
+      thisShopAllFoodNum: 0, //当前商家购物车总数量
+      ratings: {},
+      ratingsTags: {},
+      commentListAll: [],
+      loadingComment: false,
+      finished: false,
+      offset: 0,
+      limit: 10,
+      tag_name: '',
+      active: 0,
+      clickTabFlag: true,
+      imgList: ['17d60c1c8d639884.png', '17d60c2527f39885.png', '17d60c4f8d339886.jpeg'],
     }
   },
   components: {
@@ -166,37 +233,97 @@ export default {
     },
   },
   watch: {
-    // 只要tempCarList发生就重新计算当前食品的数量，以及更新目前购物车列表
+    '$route.query.id'(newVal, oldVal) {
+      if (newVal) {
+        this.loading=true
+        this.clickTabFlag = true
+        this.id = this.$route.query.id
+        this.getRestaurantInfo()
+        this.getFoodsList()
+        this.commentListAll = []
+        this.active = 0
+        this.tag_name = '全部'
+        this.tabClickFun(this.tag_name, 0)
+        this.onLoad(0, 10)
+      }
+    },
+    // 只要tempCarList发生变化就重新计算当前食品的数量，以及更新目前购物车列表
     tempCarList() {
       this.getThisTimeCarList()
       this.getAllPrice()
       //开启深度监听，只要对象中任何一个属性变化，都会触发对象的监听器
-      deep:true
+      deep: true
     },
-    thisShopAllFoodNum(){
-      if(!this.thisShopAllFoodNum){
-        this.showCarDialog=false
+    thisShopAllFoodNum() {
+      if (!this.thisShopAllFoodNum) {
+        this.showCarDialog = false
       }
-    }
+    },
   },
   methods: {
-    ...mapMutations(['ADDCAR_LIST', 'DELCAR_LIST','DELCARALL_LIST']),
+    ...mapMutations(['ADDCAR_LIST', 'DELCAR_LIST', 'DELCARALL_LIST']),
+    clickCommentTab(name, title) {
+      if (name === 1) {
+        this.tabClickFun('全部', 0)
+        var toTop = document.querySelector('#toTop')
+        toTop.className = 'topBtnNoneClass'
+      }
+    },
+    async onLoad(offset, limit) {
+      const { data } = await getHttpRatingsList(this.id, this.tag_name, offset, limit)
+      this.loadingComment = false
+      if (data.length === 0) {
+        //全部加载完成
+        this.finished = true
+        return
+      }
+      this.offset += limit
+      this.commentListAll.push(...data)
+    },
+    async getRatings() {
+      const { data } = await getHttpRatings(this.id)
+      this.ratings = data
+    },
+    async getHttpRatingsTags() {
+      const { data } = await getHttpRatingsTags(this.id)
+      this.ratingsTags = data
+    },
+    tabClickFun(name, index) {
+      var firstTab = document.querySelectorAll('#tabId')
+      for (var i = 0; i < firstTab.length; i++) {
+        firstTab[i].className = 'tabCommentBox tabUpAll'
+      }
+      if (firstTab.length) {
+        firstTab[index].classList.add('tabClick')
+      }
+      this.tag_name = name
+      this.offset = 0
+      this.commentListAll = []
+      this.onLoad(this.offset, this.limit)
+    },
+    tabOffset() {
+      var firstTab = document.querySelectorAll('#tabId')
+      var footer = document.querySelector('.tabCommentBox')
+      if (firstTab.length) {
+        footer.style.height = firstTab[firstTab.length - 1].offsetTop / 2 + 'px'
+      }
+    },
     //计算购物车总价格
-    getAllPrice(){
-      let allNum=0;
-      let allPrice=0
-      this.thisTimeCarList.forEach((item,index)=>{
-        allNum+=item.num
-        allPrice+=item.num*item.price
+    getAllPrice() {
+      let allNum = 0
+      let allPrice = 0
+      this.thisTimeCarList.forEach((item, index) => {
+        allNum += item.num
+        allPrice += item.num * item.price
       })
-      this.thisShopAllPrice=allPrice
-      this.thisShopAllFoodNum=allNum
+      this.thisShopAllPrice = allPrice
+      this.thisShopAllFoodNum = allNum
       //当vuex里列表清空后
-        if(!Object.values(this.carList)[0]){
-          this.thisShopAllFoodNum=0
-          this.thisShopAllPrice=0
-          this.thisTimeCarList=[]
-        }
+      if (!Object.values(this.carList)[0]) {
+        this.thisShopAllFoodNum = 0
+        this.thisShopAllPrice = 0
+        this.thisTimeCarList = []
+      }
     },
     //当前购物车
     getThisTimeCarList() {
@@ -216,9 +343,9 @@ export default {
                 this.thisTimeCarList[i].specs = item.specs
                 this.thisTimeCarList[i].num = item.num
                 i++
-              }else{
+              } else {
                 //如果列表里某一个食物个数已经为0了，就删除这个食物
-                this.thisTimeCarList.splice(i,1)
+                this.thisTimeCarList.splice(i, 1)
               }
             })
           })
@@ -230,7 +357,7 @@ export default {
         let cate_id = this.chooseFoodAllData.category_id
         let item_id = this.chooseFoodAllData.item_id
         let chooseTheFood_id = this.chooseFoodAllData.specfoods[index].food_id
-        if (this.tempCarList && this.tempCarList[cate_id] && this.tempCarList[cate_id][item_id] && this.tempCarList[cate_id][item_id][chooseTheFood_id] &&this.tempCarList[cate_id][item_id][chooseTheFood_id].num) {
+        if (this.tempCarList && this.tempCarList[cate_id] && this.tempCarList[cate_id][item_id] && this.tempCarList[cate_id][item_id][chooseTheFood_id] && this.tempCarList[cate_id][item_id][chooseTheFood_id].num) {
           let num = 0
           num += this.tempCarList[cate_id][item_id][chooseTheFood_id].num
           return num
@@ -241,30 +368,24 @@ export default {
     },
 
     //测试数据
-    testData(data){
+    testData(data) {
       console.log('!!!!!!!!!')
       console.log(data)
       console.log('!!!!!!!!!')
     },
-      //子传过来的值
-      chooseFoodDataFun(chooseFoodData) {
-        this.chooseFoodData = chooseFoodData.specfoods
-        this.showSpcesDialog = true
-        this.chooseFoodAllData = chooseFoodData
-      },
-      //子组件加购也要改变watchFlag的值
-      childChooseFoodFun(flag){
-        this.watchFlag=flag
-      },
+    //子传过来的值
+    chooseFoodDataFun(chooseFoodData) {
+      this.chooseFoodData = chooseFoodData.specfoods
+      this.showSpcesDialog = true
+      this.chooseFoodAllData = chooseFoodData
+    },
+    //子组件加购也要改变watchFlag的值
+    childChooseFoodFun(flag) {
+      this.watchFlag = flag
+    },
     //点击加购的按钮
     chooseAddBtn(index) {
-      this.addCarList(
-        this.chooseFoodAllData.category_id, 
-        this.chooseFoodAllData.item_id, 
-        this.chooseFoodAllData.name, 
-        this.chooseFoodAllData.specfoods[index].food_id, 
-        this.chooseFoodAllData.specfoods[index].price, 
-        this.chooseFoodAllData.specfoods[index].specs)
+      this.addCarList(this.chooseFoodAllData.category_id, this.chooseFoodAllData.item_id, this.chooseFoodAllData.name, this.chooseFoodAllData.specfoods[index].food_id, this.chooseFoodAllData.specfoods[index].price, this.chooseFoodAllData.specfoods[index].specs)
       this.watchFlag = true
       this.carNum()
     },
@@ -277,7 +398,7 @@ export default {
       this.ADDCAR_LIST({ shop_id: this.id, cate_id, item_id, name, food_id, price, specs })
     },
     //清空购物车
-    clearAll(){
+    clearAll() {
       this.DELCARALL_LIST(this.id)
     },
     delCarList(cate_id, item_id, name, food_id, price, specs) {
@@ -293,10 +414,10 @@ export default {
     },
     showCar() {
       //如果购物车总数量为0就不能点击显示购物车列表
-      if(!this.thisShopAllFoodNum){
+      if (!this.thisShopAllFoodNum) {
         this.showCarDialog = false
-      }else{
-        this.showCarDialog=true
+      } else {
+        this.showCarDialog = true
       }
     },
 
@@ -312,8 +433,10 @@ export default {
       this.tips = this.item.piecewise_agent_fee.tips
     },
     async getFoodsList() {
+
       const { data } = await getHttpFoodList(this.id)
       this.foodItem = data
+      this.loading = false
     },
     computedPrice(list) {
       var arr = []
@@ -327,8 +450,7 @@ export default {
       var navScrollNode = document.querySelector('#nav')
       var toTop = document.querySelector('#toTop')
       var allfoodsLi = document.querySelectorAll('#wrap li') //文档
-      var allNavLi = document.querySelectorAll('#nav li #btnLiId') //导航
-
+      var allNavLi = document.querySelectorAll('#nav li #btnLiId') //导航、
       function debounce(func, wait) {
         let timer = null
         return function () {
@@ -419,13 +541,18 @@ export default {
       })()
     },
   },
+  mounted() {
+    this.tabOffset()
+  },
   updated() {
-    this.scroolFoodsList()
+    !this.loading && this.scroolFoodsList()
   },
   created() {
     this.id = this.$route.query.id
     this.getRestaurantInfo()
     this.getFoodsList()
+    this.getRatings()
+    this.getHttpRatingsTags()
   },
 }
 </script>
@@ -435,21 +562,177 @@ export default {
   margin: 0;
   padding: 0;
 }
-.clearAll{
+.commentStar {
+  width: 80px;
+}
+.userImg {
+  width: 25px;
+  height: 25px;
+}
+.commentImg {
+  width: 60px;
+  height: 60px;
+}
+.commentImgBox {
+  margin-left: 50px;
+}
+.imgTabBox {
+  margin-top: 10px;
+  margin-left: 50px;
+}
+.imgTabBox span {
+  color: rgb(155, 155, 155);
+  border: 1px solid rgb(155, 155, 155);
+  border-radius: 10%;
+  background-color: #fff;
+  margin-right: 5px;
+  font-size: 12px;
+  margin-bottom: 5px;
+  float: left;
+}
+.dateBox {
+  position: relative;
+}
+.dateBox span {
+  position: absolute;
+  top: -45px;
+  left: 240px;
+  font-size: 12px;
+  color: rgb(155, 155, 155);
+  display: inline-block;
+}
+.userNameBox span:nth-child(1) {
+  position: absolute;
+  top: -35px;
+  left: 20px;
+  color: #393939;
+  font-size: 12px;
+  width: 100px;
+  overflow: hidden;
+}
+.userNameBox span:nth-child(2) {
+  position: absolute;
+  top: -10px;
+  left: 20px;
+  color: #393939;
+  font-size: 12px;
+}
+.userNameBox {
+  position: relative;
+  display: inline-block;
+}
+.userImgBox {
+  display: inline-block;
+  background-color: rgb(70, 182, 242);
+  border-radius: 50%;
+}
+.tabCommentBox {
+  margin: 10px;
+}
+.commentListBox {
+  margin: 15px;
+  margin-top: 30px;
+}
+.tabCommentBox .tabUp:nth-child(1) {
+  float: left;
+  height: 15px;
+  margin: 5px;
+  font-size: 10px;
+  color: rgb(255, 255, 255);
+  padding: 3%;
+  background-color: rgb(70, 182, 242);
+  border-radius: 10%;
+}
+.tabCommentBox .tabUp {
+  float: left;
+  height: 15px;
+  margin: 5px;
+  font-size: 10px;
+  color: rgb(58, 58, 58);
+  padding: 3%;
+  background-color: rgb(160, 190, 199);
+  border-radius: 10%;
+}
+.tabCommentBox .tabUpAll {
+  float: left;
+  height: 15px;
+  margin: 5px;
+  font-size: 10px;
+  color: rgb(58, 58, 58);
+  padding: 3%;
+  background-color: rgb(160, 190, 199);
+  border-radius: 10%;
+}
+.tabClick {
+  color: rgb(255, 255, 255) !important;
+  background-color: rgb(70, 182, 242) !important;
+}
+.headLeft .rateData {
+  height: 20%;
+  text-align: center;
+  margin-top: 5%;
+  padding-left: 20%;
+}
+.headLeft .rateData section:nth-child(1) {
+  color: #f4b700;
+  font-size: 35px;
+}
+.headLeft .rateData section:nth-child(2) {
+  color: rgb(155, 155, 155);
+}
+.headLeft .rateData section:nth-child(3) {
+  font-size: 12px;
+  color: rgb(155, 155, 155);
+}
+.headRight .rateData {
+  float: left;
+  margin-top: 5%;
+  margin-left: 10px;
+}
+.headRight .rateData section {
+  margin-bottom: 5px;
+}
+.headRight .rateData section .star {
+  margin-left: 5px;
+}
+.headRight .rateData section span {
+  color: #ffd21e;
+  margin-left: 5px;
+}
+.headRight .rateData section:nth-child(3) span {
+  color: rgb(155, 155, 155);
+  margin-left: 5px;
+}
+.head {
+  height: 100px;
+  margin-top: 0;
+  border-bottom: 1px solid rgb(155, 155, 155);
+}
+
+.head .headLeft {
+  float: left;
+  height: 100%;
+  width: 40%;
+}
+.head .headRight {
+  float: left;
+  height: 100%;
+  width: 60%;
+}
+.clearAll {
   color: rgb(155, 155, 155);
   font-size: 14px;
   margin-left: 18px;
   margin-top: 25px;
-
 }
-.carFooter{
+.carFooter {
   height: 40%;
   padding-bottom: 50px;
 }
 .thisTimeCarBox {
   padding: 5px;
 }
-.thisTimeCarBox .food:nth-child(2){
+.thisTimeCarBox .food:nth-child(2) {
   margin-right: 5px;
   font-size: 12px;
   color: rgb(155, 155, 155);
@@ -542,6 +825,9 @@ export default {
 .topBtnNoneClass {
   display: none;
 }
+.divider {
+  margin: 0;
+}
 .routerFoodOrComm {
   position: absolute;
   top: 110px;
@@ -551,16 +837,13 @@ export default {
   position: relative;
 }
 .navClass {
+  position: fixed;
   background-color: rgb(255 255 255 / 20%);
   float: left;
-}
-.heard {
-  position: fixed;
 }
 .footer {
   height: 660px;
   position: absolute;
-  top: 150px;
   width: 100%;
 }
 .foodCageClass {

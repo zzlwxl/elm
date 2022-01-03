@@ -18,7 +18,9 @@ const router=new Router({
     {path:'/city/:id',component:City,props:true},
     {path:'/food',component:Food},
     {path:'/search',component:Search},
-    {path:'/shop',component:Shop},
+    {path:'/shop',component:Shop,meta:{
+      keepAlive:true
+    }},
   ]
 })
 router.beforeEach((to,from,next)=>{
