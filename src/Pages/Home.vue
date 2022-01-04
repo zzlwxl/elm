@@ -1,6 +1,6 @@
 <template>
   <div>
-    <van-nav-bar left-text="返回" left-arrow @click-left="$router.back()" />
+    <MyNavBar :isShowLeft="true"></MyNavBar>
     <van-skeleton animate :row="30" :loading="loading">
       <van-index-bar>
         <span v-for="(item, key) in sortCityList" :key="key">

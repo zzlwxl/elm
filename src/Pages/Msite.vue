@@ -1,13 +1,6 @@
 <template>
   <div>
-    <van-nav-bar :title="userLocation">
-      <template #left>
-        <van-icon @click="goSearch" name="search" size="18" />
-      </template>
-      <template #right>
-        <van-icon @click="goCityList" name="location-o" size="18" />
-      </template>
-    </van-nav-bar>
+    <MyNavBar :isShowLeft="true" iconLeft="search" :toLeft="searchPage" :iconSize="18"  :isShowRight="true" iconRight="location-o" :toRight="homePage">{{userLocation}}</MyNavBar>
     <van-swipe class="my-swipe" :autoplay="3000" indicator-color="white">
       <van-swipe-item v-for="(minArr, index) in foodEntryList" :key="index">
         <van-grid>
@@ -43,6 +36,8 @@ export default {
       userLocation: '',
       lltude: [], //经纬度数组
       foodEntryList: [], //食品分类列表
+      searchPage:'',
+      homePage:''
     }
   },
   async created() {
@@ -50,12 +45,8 @@ export default {
   },
   watch: {
     '$route.query.geohash'(newVal , oldVal){
-
-      // handler: function (geohash) {
         this.$route.query.geohash && this.init()
         console.log("init ......change")
-      // },
-      // immediate: true,
     },
   },
   computed: {
@@ -72,7 +63,8 @@ export default {
   },
   methods: {
     init() {
-      console.log('调用了一次init-----------------------------')
+      this.homePage=homePage
+      this.searchPage=searchPage
       //接收新坐标
       if (this.$route.query.geohash) {
         this.lltude = this.$route.query.geohash.split(',')
@@ -97,9 +89,6 @@ export default {
         this.userLocation = data.name
       }
     },
-    goCityList() {
-      this.$router.push(homePage)
-    },
     async getFoodList() {
       const { data } = await getHttpFoodCate()
       const arr = []
@@ -118,13 +107,13 @@ export default {
       console.log(1)
       console.log(this.foodEntryList)
     },
-    goSearch() {
-      this.$router.push(searchPage)
-    },
   },
 }
 </script>
 <style lang="less" scoped>
+.header{
+    background-color: rgb(70, 182, 242);
+}
 .fjShopClass {
   position: absolute;
   top: 245px;

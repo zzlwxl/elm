@@ -1,6 +1,6 @@
 <template>
   <div>
-    <keep-alive exclude="Comment">
+    <keep-alive>
       <router-view  v-if="$route.meta.keepAlive"></router-view>
     </keep-alive>
       <router-view v-if="!$route.meta.keepAlive"></router-view>

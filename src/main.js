@@ -4,10 +4,11 @@ import router from './router'
 import store from './store'
 import '@/plugins/Vant.js'
 import 'vant/lib/index.less';
+import MyNavBar from '@/MyUI/'
 
 import axios from 'axios'
 
-
+Vue.mixin(MyNavBar)
 Vue.config.productionTip = false
 Vue.config.devtools = true;
 axios.defaults.baseURL='http://item.wangxuelong.vip:8001/'

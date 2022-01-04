@@ -27,3 +27,5 @@ export const restaurantInfoPage=(latitude,longitude,id)=>{
         id:id
     })
 }
+//我的页面
+export const userPage= '/user'

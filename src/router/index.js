@@ -6,6 +6,10 @@ import City from '@/Pages/City.vue'
 import Food from '@/Pages/Food.vue'
 import Search from '@/Pages/Search.vue'
 import Shop from '@/components/RestaurantInfo.vue'
+import User from '@/Pages/User.vue'
+import Order from '@/Pages/Order.vue'
+import VipCard from '@/Pages/VipCard.vue'
+import Service from '@/Pages/Service.vue'
 Vue.use(Router)
 
 const router=new Router({
@@ -21,6 +25,11 @@ const router=new Router({
     {path:'/shop',component:Shop,meta:{
       keepAlive:true
     }},
+    {path:'/user',component:User},
+    {path:'/order',component:Order},
+    {path:'/vipCard',component:VipCard},
+    {path:'/service',component:Service}
+    
   ]
 })
 router.beforeEach((to,from,next)=>{
