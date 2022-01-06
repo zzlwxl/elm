@@ -11,7 +11,9 @@ export default new Vuex.Store({
     latitude:'35.088595',//当前维度
     longitude:'113.431843',//当前精度
     geohash:'35.088595,113.431843',//当前位置坐标
-    carList:{}//购物车列表
+    carList:{},//购物车列表,
+    userInfo:null,//用户信息
+    loginState:false//未登录
   },
   getters,
 	actions,

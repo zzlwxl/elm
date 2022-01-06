@@ -13,7 +13,7 @@
       <span>附近商家</span>
     </div>
     <van-divider />
-    <restaurantList :obj="obj"></restaurantList>
+    <RestaurantList :obj="obj"></RestaurantList>
     <Tabbar></Tabbar>
   </div>
 </template>
@@ -116,7 +116,7 @@ export default {
 }
 .fjShopClass {
   position: absolute;
-  top: 245px;
+  top: 240px;
   bottom: 0;
   left: 10px;
   right: 0;

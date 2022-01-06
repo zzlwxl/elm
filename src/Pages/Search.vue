@@ -1,6 +1,6 @@
 <template>
   <div>
-    <van-nav-bar title="搜索" left-text="返回" left-arrow @click-left="$router.back()" />
+    <MyNavBar>搜索</MyNavBar>
     <van-search @clear="clearInput" clearable v-model="keyword" show-action placeholder="请输入商家或美食名称" @search="onSearch">
       <template #action>
         <div @click="onSearch">搜索</div>

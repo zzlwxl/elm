@@ -1,4 +1,6 @@
 import http from 'axios'
+
+http.defaults.withCredentials=true
 export default async(url,data={},type='GET')=>{
     type=type.toUpperCase();
     if(type=='GET'){
@@ -12,7 +14,7 @@ export default async(url,data={},type='GET')=>{
         }
     }
     let requestConfig = {
-        credentials: 'include',
+        // credentials: 'include',
         method: type,
         headers: {
             'Accept': 'application/json',
@@ -22,14 +24,11 @@ export default async(url,data={},type='GET')=>{
         cache: "force-cache"
     }
     if(type=='POST'){
-        Object.defineProperty(requestConfig,'body',{
-            value:JSON.stringify(data)
-        })
+        requestConfig.data=JSON.stringify(data)
+        console.log(requestConfig.data)
     }
     try{
-        console.log('---'+url)
         const response = await http(url,requestConfig);
-        // console.log(response)
         return response
     }catch(error){
         throw new Error(error)

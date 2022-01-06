@@ -38,8 +38,13 @@ import {
     Dialog,
     Sku,
     RadioGroup, 
-    Radio
+    Radio,
+    Form,
+    Field,
 } from 'vant';
+Vue.use(Toast)
+Vue.use(Form)
+Vue.use(Field)
 Vue.use(RadioGroup)
 Vue.use(Radio)
 Vue.use(Sku)
@@ -61,7 +66,6 @@ Vue.use(Button)
 Vue.use(NavBar)
 Vue.use(Icon)
 Vue.use(Notify)
-Vue.use(Toast)
 Vue.use(Col)
 Vue.use(Row)
 Vue.use(Grid)

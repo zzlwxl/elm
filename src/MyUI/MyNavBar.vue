@@ -1,86 +1,122 @@
 <template>
-  <div>
+  <div class="box">
     <div :class="['navBar']">
-    <van-icon v-if="isShowLeft2" @click="clickLeft" class="left" :name="iconLeft2" :size="iconSize2" />
-      <slot></slot>
-    <van-icon v-if="isShowRight2" @click="clickRight" class="right" :name="iconRight2" :size="iconSize2" />
+      <span>
+        <van-icon v-if="isShowLeft2" @click="clickLeft" class="left" :name="iconLeft2" :size="iconSize2" />
+      </span>
+      <span>
+        <slot></slot>
+      </span>
+      <span>
+        <van-icon v-if="isShowRight2" @click="clickRight" class="right" :name="iconRight2" :size="iconSize2" />
+      </span>
     </div>
   </div>
 </template>
 
 <script>
+import {getStore} from '@/utils/utils.js'
+import {mapState,mapActions} from 'vuex'
 export default {
   name: 'MyNavBar',
   props: {
     styleString: String,
-    isShowLeft:Boolean,//默认不显示
-    isShowRight:Boolean,
-    iconLeft:String,
-    iconRight:String,
-    toLeft:String,
-    toRight:String,
-    iconSize:Number
+    isShowLeft: Boolean, //默认不显示
+    isShowRight: Boolean,
+    iconLeft: String,
+    iconRight: String,
+    toLeft: String,
+    toRight: String,
+    iconSize: Number,
   },
   data() {
-      return {
-          isShowLeft2:true,
-          isShowRight2:true,
-          iconLeft2:'arrow-left',//默认显示的图标
-          iconRight2:'arrow-left',
-          toLeft2:'',
-          toRight2:'',
-          iconSize2:12
-      }
+    return {
+      isShowLeft2: true,
+      isShowRight2: true,
+      iconLeft2: 'arrow-left', //默认显示的图标
+      iconRight2: 'arrow-left',
+      toLeft2: '',
+      toRight2: '',
+      iconSize2: 12,
+    }
+  },
+  computed:{
+      ...mapState(['userInfo'])
   },
   methods: {
-      clickLeft(){
-          if(this.toLeft2===''){
-              this.$router.back()
-          }else{
-              this.$router.push(this.toLeft2)
-          }
-      },
-      clickRight(){
-          if(this.toRight2===''){
-              this.$router.back()
-          }else{
-              this.$router.push(this.toRight2)
-          }
+    ...mapActions(['getUserInfo']),
+    clickLeft() {
+      if (this.toLeft2 === '') {
+        this.$router.back()
+      } else {
+        this.$router.push(this.toLeft2)
       }
+    },
+    clickRight() {
+      if (this.toRight2 === '') {
+        this.$router.back()
+      } else {
+        this.$router.push(this.toRight2)
+      }
+    },
+    getUserInfoFun(){
+        console.log('this.userInfo')
+        //vuex里没有值，且session里有值
+        if(!this.userInfo && getStore('user_id')){
+            var id = getStore('user_id')
+            console.log('用户ID'+id)
+            this.getUserInfo(id,3)
+        }
+    }
+  },
+  mounted() {
+      this.getUserInfoFun()
   },
   created() {
-      this.isShowLeft2=(this.isShowLeft || false)
-      this.isShowRight2=(this.isShowRight || false)
-      this.toLeft2=(this.toLeft || '')
-      this.toRight2=(this.toRight || '')
-      this.iconSize2=(this.iconSize || this.iconSize2)
-      if(this.isShowRight){
-          this.iconRight2=(this.iconRight || this.iconRight2)
-      }
-      if(this.isShowLeft){
-          this.iconLeft2=(this.iconLeft || this.iconLeft2)
-      }
+    this.isShowLeft2 = this.isShowLeft || false
+    this.isShowRight2 = this.isShowRight || false
+    this.toLeft2 = this.toLeft || ''
+    this.toRight2 = this.toRight || ''
+    this.iconSize2 = this.iconSize || this.iconSize2
+    if (this.isShowRight) {
+      this.iconRight2 = this.iconRight || this.iconRight2
+    }
+    if (this.isShowLeft) {
+      this.iconLeft2 = this.iconLeft || this.iconLeft2
+    }
   },
 }
 </script>
 
 <style lang="less" scoped>
+.box{
+    background-color: rgb(70, 182, 242);
+    border-bottom: 1px solid rgb(240, 240, 240);
+}
 .navBar {
   background-color: rgb(70, 182, 242);
   height: 30px;
-  width: 100%;
+  width: 96%;
   font-size: 14px;
-  border-bottom: 1px solid rgb(240, 240, 240);
   text-align: center;
-  color: rgb(255, 255, 255);
   padding-top: 10px;
+  margin: 0 auto;
 }
-.left{
+    .navBar span{
+        color: rgb(255, 255, 255);
+    }
+.navBar span:nth-child(1){
     float: left;
-    padding-top: 3px;
+    width: 20px;
+    color:rgb(255, 255, 255);
 }
-.right{
-    float: right;
-    padding-top: 3px;
+.left {
+  float: left;
+  padding-top: 3px;
+}
+.right {
+  float: right;
+  padding-top: 3px;
+  // padding-right: 10px;
 }
 </style>

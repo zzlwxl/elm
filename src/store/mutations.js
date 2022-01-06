@@ -1,4 +1,5 @@
-import { RECORD_ADDRESS, RECORD_GEOHASH, ADDCAR_LIST ,DELCAR_LIST,DELCARALL_LIST} from '@/store/mutation-types.js'
+import { RECORD_ADDRESS,SET_LOGINSTATE,OUT_LOGIN,SET_USERNAME, RECORD_GEOHASH, ADDCAR_LIST ,DELCAR_LIST,DELCARALL_LIST,WRITE_USERINFO,GET_USERINFO} from '@/store/mutation-types.js'
+import {setStore} from '@/utils/utils.js'
 export default {
   [RECORD_ADDRESS](state, lltude) {
     ;(state.latitude = lltude[0]), (state.longitude = lltude[1])
@@ -62,5 +63,28 @@ export default {
     state.carList={...state.carList}
     console.log('vuex数据')
     console.log(state.carList)
+  },
+  //记录用户信息
+  [WRITE_USERINFO](state,info){
+    state.userInfo = info
+    state.loginState=true
+    setStore('user_id',info.user_id)
+  },
+  // 获取用户信息存入vuex
+  [GET_USERINFO](state,value){
+    state.loginState=true
+    state.userInfo = value
+  },
+  //更改用户状态
+  [SET_LOGINSTATE](state,value){
+    state.loginState=value
+  },
+  //修改用户名
+  [SET_USERNAME](state,username){
+    state.userInfo=Object.assign({},state.userInfo,{username})
+  },
+  [OUT_LOGIN](state){
+    state.userInfo=null
+    state.loginState=false
   }
 }

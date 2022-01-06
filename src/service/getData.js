@@ -68,3 +68,33 @@ export const getHttpRatingsList=(restaurant_id,tag_name,offset,limit)=>http(`/ug
     offset:offset,
     limit:limit
 })
+/**
+ * 获取验证码
+ */
+export const postHttpCode=()=>http('/v1/captchas',{},"POST")
+/**
+ * 登录
+ */
+export const postHttpLogin=(username,password,captcha_code,cap)=>http('/v2/login',{
+    username:username,
+    password:password,
+    captcha_code:captcha_code,
+    cap:cap
+},'POST')
+/**
+ * 获取用户信息
+ */
+export const getHttpUserInfo=(user_id)=>http('/v1/user',{
+    user_id:user_id
+})
+/**
+ * 修改密码
+ */
+export const postHttpChangePassword=(username,oldpassWord,newpassWord,confirmpassword,captcha_code,cap)=>http('/v2/changepassword',{
+    username:username,
+    oldpassWord:oldpassWord,
+    newpassword:newpassWord,
+    confirmpassword:confirmpassword,
+    captcha_code:captcha_code,
+    cap:cap
+},'POST')
