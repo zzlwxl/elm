@@ -1,8 +1,18 @@
-import { RECORD_ADDRESS,SET_LOGINSTATE,OUT_LOGIN,SET_USERNAME, RECORD_GEOHASH, ADDCAR_LIST ,DELCAR_LIST,DELCARALL_LIST,WRITE_USERINFO,GET_USERINFO} from '@/store/mutation-types.js'
-import {setStore} from '@/utils/utils.js'
+import { RECORD_ADDRESS,GET_CARALL_LIST,CLEAR_HISORYADDRESS,GET_ADDRESS,SET_LOGINSTATE,OUT_LOGIN,SET_USERNAME, RECORD_GEOHASH, ADDCAR_LIST ,DELCAR_LIST,DELCARALL_LIST,WRITE_USERINFO,GET_USERINFO} from '@/store/mutation-types.js'
+import { getStore, setStore ,removeStore} from '@/utils/utils.js'
 export default {
   [RECORD_ADDRESS](state, lltude) {
     ;(state.latitude = lltude[0]), (state.longitude = lltude[1])
+  },
+  [CLEAR_HISORYADDRESS](state){
+    state.hisorySerachAddressList=[]
+  },
+  //获取历史历史记录存入vuex
+  [GET_ADDRESS](state){
+    if (getStore('placeHistory')) {
+      //如果有历史记录就添加
+      state.hisorySerachAddressList = JSON.parse(getStore('placeHistory'))
+    }
   },
   [RECORD_GEOHASH](state, lltude) {
     state.geohash = lltude[0] + ',' + lltude[1]
@@ -34,6 +44,7 @@ export default {
          }
      }
      state.carList={...carList}
+     setStore('carList',state.carList)
   },
   //移除购物车
   [DELCAR_LIST](state,{
@@ -51,6 +62,7 @@ export default {
             console.log('vuex')
               item[food_id]['num']--
               state.carList={...carList}}
+              setStore('carList',state.carList)
               if(item[food_id]['num']==0){
                 item[food_id]=null
               console.log('~~~~')
@@ -61,8 +73,16 @@ export default {
   [DELCARALL_LIST](state,shop_id){
     state.carList[shop_id]=null
     state.carList={...state.carList}
+    setStore('carList',state.carList)
     console.log('vuex数据')
     console.log(state.carList)
+  },
+  //获取本地购物车列表存入vuex
+  [GET_CARALL_LIST](state){
+    let sessionCarList = getStore('carList');
+		if (sessionCarList) {
+			state.carList = JSON.parse(sessionCarList);
+		}
   },
   //记录用户信息
   [WRITE_USERINFO](state,info){

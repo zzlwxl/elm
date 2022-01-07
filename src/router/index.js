@@ -15,6 +15,9 @@ import UserInfo from '@/Pages/UserInfo.vue'
 import Forget from '@/Pages/Forget.vue'
 import SetUserName from '@/Pages/SetUserName.vue'
 import Address from '@/Pages/Address.vue'
+import AddressAdd from '@/Pages/AddressAdd.vue'
+import Null from '@/Pages/Null.vue'
+
 import { getStore } from '@/utils/utils.js'
 Vue.use(Router)
 
@@ -53,7 +56,11 @@ const router = new Router({
       },
       children: [
         { path: 'setusername', component: SetUserName },
-        { path: 'address', component: Address },
+        { path: 'addressedit',component:Null,
+        children:[
+          {path:'address',component:Address},
+          {path:'addressadd',component:AddressAdd}
+        ]},
       ],
     },
     { path: '/forget', component: Forget },

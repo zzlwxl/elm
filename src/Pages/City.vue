@@ -26,6 +26,7 @@
 import { getStore, setStore ,removeStore} from '@/utils/utils.js'
 import {getHttpCityName,getHttpSearchCityName} from '@/service/getData.js'
 import {searchFoodsPage} from '@/router/routerStr.js'
+import {mapMutations,mapState} from 'vuex'
 export default {
   props: ['id'],
   data() {
@@ -33,7 +34,6 @@ export default {
       cityName: '',
       inputAddress: '',
       searchAddressList: [],
-      hisorySerachAddressList: [],
       isShowHistory: true,
     }
   },
@@ -41,18 +41,19 @@ export default {
     this.getCityName()
     this.initData()
   },
+  computed:{
+    ...mapState(['hisorySerachAddressList'])
+  },
   methods: {
+    ...mapMutations(['GET_ADDRESS','CLEAR_HISORYADDRESS']),
     initData() {
       //获取搜索历史记录
       if (getStore('placeHistory')) {
-        //如果有历史记录就添加
-        this.hisorySerachAddressList = JSON.parse(getStore('placeHistory'))
+        this.GET_ADDRESS()
       } else {
           //没有历史记录就不用显示清楚按钮了
         this.isShowHistory=false
-        this.hisorySerachAddressList = []
       }
-      console.log(this.hisorySerachAddressList)
     },
     async getCityName() {
       const { data, status } = await getHttpCityName(this.id)
@@ -64,7 +65,7 @@ export default {
     },
     //搜索城市里具体地址
     async onSearch() { 
-      if(!this.inputAddress===''){
+      if(this.inputAddress){
       const { data, status } = await getHttpSearchCityName(this.id,this.inputAddress)
       if (status !== 200) {
         return this.$toast('搜索失败')
@@ -111,6 +112,7 @@ export default {
     clearHistory() {
         this.isShowHistory=false
       removeStore('placeHistory')
+      this.CLEAR_HISORYADDRESS()
       this.initData()
     },
   },

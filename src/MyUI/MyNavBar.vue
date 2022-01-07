@@ -1,22 +1,25 @@
 <template>
-  <div class="box">
-    <div :class="['navBar']">
-      <span>
-        <van-icon v-if="isShowLeft2" @click="clickLeft" class="left" :name="iconLeft2" :size="iconSize2" />
-      </span>
-      <span>
-        <slot></slot>
-      </span>
-      <span>
-        <van-icon v-if="isShowRight2" @click="clickRight" class="right" :name="iconRight2" :size="iconSize2" />
-      </span>
+  <div>
+    <div class="box">
+      <div :class="['navBar']">
+        <span>
+          <van-icon v-if="isShowLeft2" @click="clickLeft" class="left" :name="iconLeft2" :size="iconSize2" />
+        </span>
+        <span>
+          <slot></slot>
+        </span>
+        <span>
+          <van-icon v-if="isShowRight2" @click="clickRight" class="right" :name="iconRight2" :size="iconSize2" />
+        </span>
+      </div>
     </div>
+    <div id="show"></div>
   </div>
 </template>
 
 <script>
-import {getStore} from '@/utils/utils.js'
-import {mapState,mapActions} from 'vuex'
+import { getStore } from '@/utils/utils.js'
+import { mapState, mapActions } from 'vuex'
 export default {
   name: 'MyNavBar',
   props: {
@@ -40,8 +43,8 @@ export default {
       iconSize2: 12,
     }
   },
-  computed:{
-      ...mapState(['userInfo'])
+  computed: {
+    ...mapState(['userInfo']),
   },
   methods: {
     ...mapActions(['getUserInfo']),
@@ -59,18 +62,18 @@ export default {
         this.$router.push(this.toRight2)
       }
     },
-    getUserInfoFun(){
-        console.log('this.userInfo')
-        //vuex里没有值，且session里有值
-        if(!this.userInfo && getStore('user_id')){
-            var id = getStore('user_id')
-            console.log('用户ID'+id)
-            this.getUserInfo(id,3)
-        }
+    getUserInfoFun() {
+      console.log('this.userInfo')
+      //vuex里没有值，且session里有值
+      if (!this.userInfo && getStore('user_id')) {
+        var id = getStore('user_id')
+        console.log('用户ID' + id)
+        this.getUserInfo(id, 3)
+      }
     }
   },
   mounted() {
-      this.getUserInfoFun()
+    this.getUserInfoFun()
   },
   created() {
     this.isShowLeft2 = this.isShowLeft || false
@@ -89,9 +92,16 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.box{
-    background-color: rgb(70, 182, 242);
-    border-bottom: 1px solid rgb(240, 240, 240);
+.box {
+  background-color: rgb(70, 182, 242);
+  position: fixed;
+  z-index: 999;
+  width: 100%;
+  border-bottom: 1px solid rgb(240, 240, 240);
+}
+#show{
+    width: 100%;
+    height: 41px;
 }
 .navBar {
   background-color: rgb(70, 182, 242);
@@ -102,13 +112,13 @@ export default {
   padding-top: 10px;
   margin: 0 auto;
 }
-    .navBar span{
-        color: rgb(255, 255, 255);
-    }
-.navBar span:nth-child(1){
-    float: left;
-    width: 20px;
-    color:rgb(255, 255, 255);
+.navBar span {
+  color: rgb(255, 255, 255);
+}
+.navBar span:nth-child(1) {
+  float: left;
+  width: 20px;
+  color: rgb(255, 255, 255);
 }
 .left {
   float: left;

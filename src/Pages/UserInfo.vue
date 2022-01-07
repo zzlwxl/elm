@@ -7,17 +7,17 @@
           <div class="useImgBox"><van-icon class="userImg" name="manager-o" size="40" /></div>
         </template>
       </van-cell>
-      <van-cell @click="text()" is-link to="/userinfo/setusername">
+      <van-cell @click="changeRouterFlag()" is-link to="/userinfo/setusername">
         <template #title>
           <span class="custom-title">{{ username }}</span>
         </template>
       </van-cell>
-      <van-cell @click="text()" to="/userinfo/address" is-link>
+      <van-cell @click="changeRouterFlag()" to="/userinfo/addressedit/address" is-link>
         <template #title>
           <span class="custom-title">收货地址</span>
         </template>
       </van-cell>
-      <van-cell value="修改" @click="text()" to="/forget" is-link>
+      <van-cell value="修改" @click="changeRouterFlag()" to="/forget" is-link>
         <template #title>
           <span class="custom-title">登录密码</span>
         </template>
@@ -49,7 +49,7 @@ export default {
     init() {
       this.username = this.userInfo.username
     },
-    text(){
+    changeRouterFlag(){
         console.log('改了一次')
         this.routerFlag=false
     },
@@ -60,14 +60,14 @@ export default {
     }
   },
   mounted() {
-      console.log('组件被创建了',this.routerFlag)
+      
   },
   deactivated() {
-      console.log('组件被缓存了',this.routerFlag)
+      
       this.routerFlag=false
   },
   activated() {
-    console.log('组件被激活了',this.routerFlag)
+
     this.routerFlag = true
     this.userInfo && this.init()
   },

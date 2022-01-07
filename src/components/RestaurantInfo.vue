@@ -186,6 +186,7 @@
 <script>
 import { getHttpFoodList, getHttpRestaurantsHeader, getHttpRatings, getHttpRatingsTags, getHttpRatingsList } from '@/service/getData.js'
 import { mapState, mapMutations } from 'vuex'
+import { getStore} from '@/utils/utils.js'
 import AddCar from '@/Pages/AddCar.vue'
 export default {
   data() {
@@ -206,6 +207,7 @@ export default {
       chooseFood_id: '', //当前选择的食物规格ID
       showCarDialog: false, //是否展示购物车
       watchFlag: false, //首次进入侦听器不工作
+      getSessionFlag:false,
       thisTimeCarList: [],
       thisShopAllPrice: 0, //当前商家购物车总价格
       thisShopAllFoodNum: 0, //当前商家购物车总数量
@@ -249,6 +251,7 @@ export default {
     },
     // 只要tempCarList发生变化就重新计算当前食品的数量，以及更新目前购物车列表
     tempCarList() {
+      console.log('watch............')
       this.getThisTimeCarList()
       this.getAllPrice()
       //开启深度监听，只要对象中任何一个属性变化，都会触发对象的监听器
@@ -261,7 +264,7 @@ export default {
     },
   },
   methods: {
-    ...mapMutations(['ADDCAR_LIST', 'DELCAR_LIST', 'DELCARALL_LIST']),
+    ...mapMutations(['ADDCAR_LIST', 'DELCAR_LIST', 'DELCARALL_LIST','GET_CARALL_LIST']),
     clickCommentTab(name, title) {
       if (name === 1) {
         this.tabClickFun('全部', 0)
@@ -310,11 +313,14 @@ export default {
     },
     //计算购物车总价格
     getAllPrice() {
+      console.log('getAllPrice......')
       let allNum = 0
       let allPrice = 0
       this.thisTimeCarList.forEach((item, index) => {
-        allNum += item.num
-        allPrice += item.num * item.price
+        if(item.shop_id === this.id){
+          allNum += item.num
+          allPrice += item.num * item.price
+        }
       })
       this.thisShopAllPrice = allPrice
       this.thisShopAllFoodNum = allNum
@@ -328,7 +334,10 @@ export default {
     //当前购物车
     getThisTimeCarList() {
       let i = 0
-      if (this.watchFlag) {
+      if (this.watchFlag || this.getSessionFlag) {
+        console.log('1')
+        console.log(this.tempCarList)
+        console.log('1')
         Object.keys(this.tempCarList).forEach((cate_id) => {
           Object.keys(this.tempCarList[cate_id]).forEach((item_id) => {
             Object.values(this.tempCarList[cate_id][item_id]).forEach((item) => {
@@ -385,6 +394,7 @@ export default {
     },
     //点击加购的按钮
     chooseAddBtn(index) {
+      console.log('加购了')
       this.addCarList(this.chooseFoodAllData.category_id, this.chooseFoodAllData.item_id, this.chooseFoodAllData.name, this.chooseFoodAllData.specfoods[index].food_id, this.chooseFoodAllData.specfoods[index].price, this.chooseFoodAllData.specfoods[index].specs)
       this.watchFlag = true
       this.carNum()
@@ -400,6 +410,7 @@ export default {
     //清空购物车
     clearAll() {
       this.DELCARALL_LIST(this.id)
+      this.thisTimeCarList=[]
     },
     delCarList(cate_id, item_id, name, food_id, price, specs) {
       this.DELCAR_LIST({
@@ -540,9 +551,30 @@ export default {
         })
       })()
     },
+    getSessionCarList(){
+      if(getStore('carList')){
+        console.log('llll',this.watchFlag)
+        this.getSessionFlag=true
+        this.GET_CARALL_LIST()
+        this.getAllPrice()
+        this.getThisTimeCarList()
+        // console.log(this.thisTimeCarList)
+      }
+    }
+  },
+  deactivated() {
+    },
+  activated() {
+    console.log('组件被激活了')
+    this.getSessionCarList()
+    console.log(this.tempCarList)
+    console.log('当前购物车列表')
+    console.log(this.thisTimeCarList)
+    
   },
   mounted() {
     this.tabOffset()
+    console.log('创建了')
   },
   updated() {
     !this.loading && this.scroolFoodsList()
@@ -858,9 +890,9 @@ export default {
   width: 75%;
   height: 100%;
 }
-.foodClass::-webkit-scrollbar {
-  width: 0;
-}
+// .foodClass::-webkit-scrollbar {
+//   width: 0;
+// }
 .foodCageClass::-webkit-scrollbar {
   width: 0;
 }

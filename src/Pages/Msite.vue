@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <MyNavBar :isShowLeft="true" iconLeft="search" :toLeft="searchPage" :iconSize="18"  :isShowRight="true" iconRight="location-o" :toRight="homePage">{{userLocation}}</MyNavBar>
+  <div class="msiteBox">
+    <MyNavBar :isShowLeft="true" iconLeft="search" :toLeft="searchPage" :iconSize="18" :isShowRight="true" iconRight="location-o" :toRight="homePage">{{ userLocation }}</MyNavBar>
     <van-swipe class="my-swipe" :autoplay="3000" indicator-color="white">
       <van-swipe-item v-for="(minArr, index) in foodEntryList" :key="index">
         <van-grid>
@@ -13,7 +13,11 @@
       <span>附近商家</span>
     </div>
     <van-divider />
-    <RestaurantList :obj="obj"></RestaurantList>
+    <keep-alive>
+      <comment :obj="obj" is="RestaurantList"> </comment>
+    </keep-alive>
+
+    <!-- <RestaurantList :obj="obj"></RestaurantList> -->
     <Tabbar></Tabbar>
   </div>
 </template>
@@ -22,8 +26,8 @@
 import { mapState, mapMutations } from 'vuex'
 import RestaurantList from '@/components/RestaurantList.vue'
 import Tabbar from '@/components/Tabbar.vue'
-import {getHttpLLGetLocal,getHttpFoodCate} from '@/service/getData.js'
-import {searchPage,homePage} from '@/router/routerStr.js'
+import { getHttpLLGetLocal, getHttpFoodCate } from '@/service/getData.js'
+import { searchPage, homePage } from '@/router/routerStr.js'
 export default {
   name: 'Msite',
   components: {
@@ -36,17 +40,17 @@ export default {
       userLocation: '',
       lltude: [], //经纬度数组
       foodEntryList: [], //食品分类列表
-      searchPage:'',
-      homePage:''
+      searchPage: '',
+      homePage: '',
     }
   },
   async created() {
     this.init()
   },
   watch: {
-    '$route.query.geohash'(newVal , oldVal){
-        this.$route.query.geohash && this.init()
-        console.log("init ......change")
+    '$route.query.geohash'(newVal, oldVal) {
+      this.$route.query.geohash && this.init()
+      console.log('init ......change')
     },
   },
   computed: {
@@ -63,8 +67,8 @@ export default {
   },
   methods: {
     init() {
-      this.homePage=homePage
-      this.searchPage=searchPage
+      this.homePage = homePage
+      this.searchPage = searchPage
       //接收新坐标
       if (this.$route.query.geohash) {
         this.lltude = this.$route.query.geohash.split(',')
@@ -82,7 +86,7 @@ export default {
     ...mapMutations(['RECORD_ADDRESS', 'RECORD_GEOHASH']),
     // 根据经纬度获取详细定位
     async getUserLocation() {
-      const { data, status } = await getHttpLLGetLocal(this.latitude,this.longitude)
+      const { data, status } = await getHttpLLGetLocal(this.latitude, this.longitude)
       if (status !== 200) {
         return this.$toast('获取详细定位失败')
       } else {
@@ -111,8 +115,8 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-.header{
-    background-color: rgb(70, 182, 242);
+.header {
+  background-color: rgb(70, 182, 242);
 }
 .fjShopClass {
   position: absolute;

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoadRestaurants(offset, limit)">
+    <van-list class="msiteBox" v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoadRestaurants(offset, limit)">
       <van-cell v-for="(item, index) in restaurantsAll" :key="index">
         <van-card @click="restaurantInfo(item.id)" :price="item.float_minimum_order_amount + '起送/' + item.piecewise_agent_fee.tips" :desc="'营业' + item.opening_hours" :title="item.name" :thumb="'http://item.wangxuelong.vip:8001/img/' + item.image_path">
           <template #tags>
@@ -87,6 +87,9 @@ export default {
 * {
   margin: 0;
   padding: 0;
+}
+.msiteBox::-webkit-scrollbar {
+  width: 0;
 }
 .addLengthClass {
   float: left;
