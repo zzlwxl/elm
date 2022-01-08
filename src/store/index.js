@@ -14,7 +14,9 @@ export default new Vuex.Store({
     carList:{},//购物车列表,
     userInfo:null,//用户信息
     loginState:false,//未登录
-    hisorySerachAddressList:[]
+    hisorySerachAddressList:[],
+    address:'',//新增收货地址
+    cityID:'144',//城市ID
   },
   getters,
 	actions,

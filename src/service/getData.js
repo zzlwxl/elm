@@ -98,3 +98,17 @@ export const postHttpChangePassword=(username,oldpassWord,newpassWord,confirmpas
     captcha_code:captcha_code,
     cap:cap
 },'POST')
+/**
+ * 新增收货地址
+ */
+export const postHttpAddAddress = (user_id,address,address_detail,geohash,name,phone,tag,sex,phone_bk,tag_type)=>http(`/v1/users/${user_id}/addresses`,{
+    user_id,address,address_detail,geohash,name,phone,tag,sex,phone_bk,tag_type
+},'POST')
+/**
+ * 获取收货地址列表
+ */
+export const getHttpAddressList = (user_id) => http(`/v1/users/${user_id}/addresses`)
+/**
+ * 删除收货地址
+ */
+export const delHttpDelAddress = (address_id,user_id) => http(`/v1/users/${user_id}/addresses/${address_id}`,{},'DELETE')

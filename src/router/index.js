@@ -59,7 +59,7 @@ const router = new Router({
         { path: 'addressedit',component:Null,
         children:[
           {path:'address',component:Address},
-          {path:'addressadd',component:AddressAdd}
+          {path:'addressadd',component:AddressAdd},
         ]},
       ],
     },

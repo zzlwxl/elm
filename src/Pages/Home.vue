@@ -6,7 +6,7 @@
         <span v-for="(item, key) in sortCityList" :key="key">
           <van-index-anchor :index="key" />
           <van-grid>
-            <van-grid-item :to="'/city/' + itemList.id" v-for="itemList in item" :key="itemList.id" :text="itemList.name" />
+            <van-grid-item @click="toCity(itemList.id)" v-for="itemList in item" :key="itemList.id" :text="itemList.name" />
           </van-grid>
         </span>
       </van-index-bar>
@@ -16,6 +16,7 @@
 
 <script>
 import {getHttpCitys} from '@/service/getData.js'
+import {mapMutations} from 'vuex'
 export default {
   data() {
     return {
@@ -27,6 +28,11 @@ export default {
     this.getCityList()
   },
   methods: {
+    ...mapMutations(['SET_CITYID']),
+    toCity(cityID){
+      this.$router.push(`/city/${cityID}`)
+      this.SET_CITYID(cityID)
+    },
     async getCityList() {
       const { data } = await getHttpCitys()
       let citySortList = {} //新建一个对象用于赋给sortCityList，如果不新建而用自己去进行排序，这样会导致vue检测不到对象发生变化，也就不会渲染页面，

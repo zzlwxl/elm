@@ -1,4 +1,4 @@
-import { RECORD_ADDRESS,GET_CARALL_LIST,CLEAR_HISORYADDRESS,GET_ADDRESS,SET_LOGINSTATE,OUT_LOGIN,SET_USERNAME, RECORD_GEOHASH, ADDCAR_LIST ,DELCAR_LIST,DELCARALL_LIST,WRITE_USERINFO,GET_USERINFO} from '@/store/mutation-types.js'
+import { RECORD_ADDRESS,ADD_HISTORYCITY,ADD_ADDRESS,GET_CARALL_LIST,SET_CITYID,DEL_ADDRESS,CLEAR_HISORYADDRESS,GET_ADDRESS,SET_LOGINSTATE,OUT_LOGIN,SET_USERNAME, RECORD_GEOHASH, ADDCAR_LIST ,DELCAR_LIST,DELCARALL_LIST,WRITE_USERINFO,GET_USERINFO} from '@/store/mutation-types.js'
 import { getStore, setStore ,removeStore} from '@/utils/utils.js'
 export default {
   [RECORD_ADDRESS](state, lltude) {
@@ -106,5 +106,17 @@ export default {
   [OUT_LOGIN](state){
     state.userInfo=null
     state.loginState=false
+  },
+  [ADD_ADDRESS](state,value){
+    state.address=value
+  },
+  [DEL_ADDRESS](state){
+    state.address=''
+  },
+  [SET_CITYID](state,value){
+    state.cityID=value
+  },
+  [ADD_HISTORYCITY](state,value){
+    this.hisorySerachAddressList=value
   }
 }

@@ -3,7 +3,7 @@ import http from 'axios'
 http.defaults.withCredentials=true
 export default async(url,data={},type='GET')=>{
     type=type.toUpperCase();
-    if(type=='GET'){
+    if(type==='GET' || type ==='DELETE'){
         let urlStr='';
         Object.keys(data).forEach(key=>{
             urlStr+=key+'='+data[key]+'&'

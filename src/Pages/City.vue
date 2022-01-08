@@ -35,6 +35,7 @@ export default {
       inputAddress: '',
       searchAddressList: [],
       isShowHistory: true,
+      
     }
   },
   created() {
@@ -45,7 +46,7 @@ export default {
     ...mapState(['hisorySerachAddressList'])
   },
   methods: {
-    ...mapMutations(['GET_ADDRESS','CLEAR_HISORYADDRESS']),
+    ...mapMutations(['GET_ADDRESS','CLEAR_HISORYADDRESS','ADD_HISTORYCITY']),
     initData() {
       //获取搜索历史记录
       if (getStore('placeHistory')) {
@@ -86,7 +87,8 @@ export default {
         //如果有历史记录且不重复，就追加
         let noRepChooseLocation = false
         //获取历史记录
-        this.hisorySerachAddressList = JSON.parse(getStore('placeHistory'))
+        // this.hisorySerachAddressList = JSON.parse(getStore('placeHistory'))
+        this.ADD_HISTORYCITY(JSON.parse(getStore('placeHistory')))
         this.hisorySerachAddressList.forEach((item) => {
           //如果历史记录每一条记录和准备追加的记录都不一致，即是新纪录，追加。
           if (item.latitude + '' === geohash.latitude && item.longitude + '' === geohash.longitude) {
