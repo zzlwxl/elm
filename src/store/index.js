@@ -17,6 +17,9 @@ export default new Vuex.Store({
     hisorySerachAddressList:[],
     address:'',//新增收货地址
     cityID:'144',//城市ID
+    chooseAddress:{},
+    carID:'',//购物车ID
+    subSuccess:false,
   },
   getters,
 	actions,

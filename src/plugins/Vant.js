@@ -41,7 +41,14 @@ import {
     Radio,
     Form,
     Field,
+    CouponCell,
+     CouponList,
+     ContactCard
 } from 'vant';
+
+Vue.use(ContactCard)
+Vue.use(CouponCell)
+Vue.use(CouponList)
 Vue.use(Toast)
 Vue.use(Form)
 Vue.use(Field)

@@ -2,25 +2,25 @@
   <div>
     <MyNavBar :isShowLeft="true">重置密码</MyNavBar>
     <van-form @submit="changePassword">
-      <van-field v-model="username" label-width="45px" name="用户名" label="用户名" placeholder="用户名" :rules="[{ required: true, message: '请填写用户名' }]" />
+      <van-field v-model="username" label-width="45px" name="用户名" label="用户名" placeholder="用户名" :rules="[{ required: true }]" />
       <div class="passwordBox">
         <div class="inputBox">
-          <van-field id="inputPassword" v-model="oldpassWord" label-width="45px" type="password" name="旧密码" label="旧密码" placeholder="旧密码" :rules="[{ required: true, message: '请填写旧密码' }]" />
+          <van-field id="inputPassword" v-model="oldpassWord" label-width="45px" type="password" name="旧密码" label="旧密码" placeholder="旧密码" :rules="[{ required: true }]" />
         </div>
       </div>
       <div class="passwordBox">
         <div class="inputBox">
-          <van-field id="inputPassword" v-model="newpassword" label-width="45px" type="password" name="新密码" label="新密码" placeholder="新密码" :rules="[{ required: true, message: '请填写新密码' }]" />
+          <van-field id="inputPassword" v-model="newpassword" label-width="45px" type="password" name="新密码" label="新密码" placeholder="新密码" :rules="[{ required: true }]" />
         </div>
       </div>
       <div class="passwordBox">
         <div class="inputBox">
-          <van-field id="inputPassword" v-model="confirmpassword" label-width="70px" type="password" name="确认新密码" label="确认新密码" placeholder="确认新密码" :rules="[{ required: true, message: '请再次填写新密码' }]" />
+          <van-field id="inputPassword" v-model="confirmpassword" label-width="70px" type="password" name="确认新密码" label="确认新密码" placeholder="确认新密码" :rules="[{ required: true}]" />
         </div>
       </div>
       <div class="passwordBox">
         <div class="inputBox">
-          <van-field id="inputPassword" v-model="captcha_code" label-width="45px" name="验证码" label="验证码" placeholder="验证码" :rules="[{ required: true, message: '验证码' }]" />
+          <van-field id="inputPassword" v-model="captcha_code" label-width="45px" name="验证码" label="验证码" placeholder="验证码" :rules="[{ required: true }]" />
         </div>
         <span class="codeBox">
           <template>

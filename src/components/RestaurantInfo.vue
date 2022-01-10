@@ -1,6 +1,6 @@
 <template>
   <div class="box">
-    <van-nav-bar class="navClass" left-arrow @click-left="$router.back()" />
+    <van-nav-bar class="navClass" left-arrow @click-left="$router.push('/msite')" />
     <div class="heard">
       <van-card :price="item.float_minimum_order_amount + '起送/' + tips" :desc="'营业' + item.opening_hours" :title="item.name" :thumb="'http://item.wangxuelong.vip:8001/img/' + item.image_path">
         <template #tags>
@@ -104,9 +104,9 @@
                   <span class="priceClass">
                     {{ '¥' + foodRow.price }}
                     <span class="spcesAddClass">
-                      <button v-if="foodRow.num" @click="delCarList(foodRow.cate_id, foodRow.item_id, foodRow.name, foodRow.food_id, foodRow.price, foodRow.specs)" class="addCarBtnClass"><van-icon name="minus" /></button>
-                      <span v-if="foodRow.num" class="addCarNum">{{ foodRow.num }}</span>
-                      <button @click="addCarList(foodRow.cate_id, foodRow.item_id, foodRow.name, foodRow.food_id, foodRow.price, foodRow.specs), testData(foodRow)" class="addCarBtnClass"><van-icon name="plus" /></button>
+                      <button v-if="foodRow.quantity" @click="delCarList(foodRow.cate_id, foodRow.item_id, foodRow.name,foodRow.packing_fee, foodRow.food_id, foodRow.price, foodRow.sku_id,foodRow.specs,foodRow.stock)" class="addCarBtnClass"><van-icon name="minus" /></button>
+                      <span v-if="foodRow.quantity" class="addCarNum">{{ foodRow.quantity }}</span>
+                      <button @click="addCarList(foodRow.cate_id, foodRow.item_id, foodRow.name,foodRow.packing_fee,  foodRow.food_id, foodRow.price,foodRow.sku_id, foodRow.specs,foodRow.stock), testData(foodRow)" class="addCarBtnClass"><van-icon name="plus" /></button>
                     </span>
                   </span>
                 </div>
@@ -184,8 +184,9 @@
 </template>
 
 <script>
-import { getHttpFoodList, getHttpRestaurantsHeader, getHttpRatings, getHttpRatingsTags, getHttpRatingsList } from '@/service/getData.js'
+import { getHttpFoodList,postHttpAddCar, getHttpRestaurantsHeader, getHttpRatings, getHttpRatingsTags, getHttpRatingsList } from '@/service/getData.js'
 import { mapState, mapMutations } from 'vuex'
+import {subOrderPage} from '@/router/routerStr.js'
 import { getStore} from '@/utils/utils.js'
 import AddCar from '@/Pages/AddCar.vue'
 export default {
@@ -228,7 +229,7 @@ export default {
     AddCar,
   },
   computed: {
-    ...mapState(['carList']),
+    ...mapState(['carList','geohash','subSuccess']),
     // 拿到指定商家的所有加购列表:监听carList变化，更新当前卖家购物车信息tempCarList，同时返回一个新的对象
     tempCarList() {
       return Object.assign({}, this.carList[this.id])
@@ -264,7 +265,7 @@ export default {
     },
   },
   methods: {
-    ...mapMutations(['ADDCAR_LIST', 'DELCAR_LIST', 'DELCARALL_LIST','GET_CARALL_LIST']),
+    ...mapMutations(['ADDCAR_LIST', 'SET_CARID','DELCAR_LIST', 'DELCARALL_LIST','GET_CARALL_LIST','SET_SUBSUCCESS']),
     clickCommentTab(name, title) {
       if (name === 1) {
         this.tabClickFun('全部', 0)
@@ -318,8 +319,8 @@ export default {
       let allPrice = 0
       this.thisTimeCarList.forEach((item, index) => {
         if(item.shop_id === this.id){
-          allNum += item.num
-          allPrice += item.num * item.price
+          allNum += item.quantity
+          allPrice += item.quantity * item.price
         }
       })
       this.thisShopAllPrice = allPrice
@@ -341,16 +342,20 @@ export default {
         Object.keys(this.tempCarList).forEach((cate_id) => {
           Object.keys(this.tempCarList[cate_id]).forEach((item_id) => {
             Object.values(this.tempCarList[cate_id][item_id]).forEach((item) => {
-              if (item && item.num > 0) {
+              if (item && item.quantity > 0) {
+                console.log('进来了一次')
                 this.thisTimeCarList[i] = {}
                 this.thisTimeCarList[i].shop_id = this.id
                 this.thisTimeCarList[i].cate_id = cate_id
                 this.thisTimeCarList[i].item_id = item_id
                 this.thisTimeCarList[i].name = item.name
+                this.thisTimeCarList[i].packing_fee = item.packing_fee
                 this.thisTimeCarList[i].food_id = item.food_id
                 this.thisTimeCarList[i].price = item.price
+                this.thisTimeCarList[i].sku_id = item.sku_id
                 this.thisTimeCarList[i].specs = item.specs
-                this.thisTimeCarList[i].num = item.num
+                this.thisTimeCarList[i].stock = item.stock
+                this.thisTimeCarList[i].quantity = item.quantity
                 i++
               } else {
                 //如果列表里某一个食物个数已经为0了，就删除这个食物
@@ -359,6 +364,9 @@ export default {
             })
           })
         })
+        console.log('+++++++++++++++++++++++++')
+        console.log(this.thisTimeCarList)
+        console.log('+++++++++++++++++++++++++')
       }
     },
     carNum(index) {
@@ -366,10 +374,10 @@ export default {
         let cate_id = this.chooseFoodAllData.category_id
         let item_id = this.chooseFoodAllData.item_id
         let chooseTheFood_id = this.chooseFoodAllData.specfoods[index].food_id
-        if (this.tempCarList && this.tempCarList[cate_id] && this.tempCarList[cate_id][item_id] && this.tempCarList[cate_id][item_id][chooseTheFood_id] && this.tempCarList[cate_id][item_id][chooseTheFood_id].num) {
-          let num = 0
-          num += this.tempCarList[cate_id][item_id][chooseTheFood_id].num
-          return num
+        if (this.tempCarList && this.tempCarList[cate_id] && this.tempCarList[cate_id][item_id] && this.tempCarList[cate_id][item_id][chooseTheFood_id] && this.tempCarList[cate_id][item_id][chooseTheFood_id].quantity) {
+          let quantity = 0
+          quantity += this.tempCarList[cate_id][item_id][chooseTheFood_id].quantity
+          return quantity
         } else {
           return 0
         }
@@ -394,33 +402,37 @@ export default {
     },
     //点击加购的按钮
     chooseAddBtn(index) {
-      console.log('加购了')
-      this.addCarList(this.chooseFoodAllData.category_id, this.chooseFoodAllData.item_id, this.chooseFoodAllData.name, this.chooseFoodAllData.specfoods[index].food_id, this.chooseFoodAllData.specfoods[index].price, this.chooseFoodAllData.specfoods[index].specs)
+      console.log('加购了',this.chooseFoodAllData)
+      this.addCarList(this.chooseFoodAllData.category_id, this.chooseFoodAllData.item_id, this.chooseFoodAllData.name,this.chooseFoodAllData.specfoods[index].packing_fee, this.chooseFoodAllData.specfoods[index].food_id, this.chooseFoodAllData.specfoods[index].price, this.chooseFoodAllData.specfoods[index].sku_id,this.chooseFoodAllData.specfoods[index].specs,this.chooseFoodAllData.specfoods[index].stock)
       this.watchFlag = true
       this.carNum()
     },
     //点击减购的按钮
     chooseDelBtn(index) {
-      this.delCarList(this.chooseFoodAllData.category_id, this.chooseFoodAllData.item_id, this.chooseFoodAllData.name, this.chooseFoodAllData.specfoods[index].food_id, this.chooseFoodAllData.specfoods[index].price, this.chooseFoodAllData.specfoods[index].specs)
+      this.delCarList(this.chooseFoodAllData.category_id, this.chooseFoodAllData.item_id, this.chooseFoodAllData.name,this.chooseFoodAllData.specfoods[index].packing_fee,  this.chooseFoodAllData.specfoods[index].food_id, this.chooseFoodAllData.specfoods[index].price, this.chooseFoodAllData.specfoods[index].sku_id,this.chooseFoodAllData.specfoods[index].specs,this.chooseFoodAllData.specfoods[index].stock)
     },
-    addCarList(cate_id, item_id, name, food_id, price, specs) {
+    addCarList(cate_id, item_id, name, packing_fee,food_id, price,sku_id, specs,stock) {
+      console.log('二次加购')
       this.chooseFood_id = food_id
-      this.ADDCAR_LIST({ shop_id: this.id, cate_id, item_id, name, food_id, price, specs })
+      this.ADDCAR_LIST({ shop_id: this.id, cate_id, item_id, name, packing_fee,food_id, price,sku_id, specs ,stock})
     },
     //清空购物车
     clearAll() {
       this.DELCARALL_LIST(this.id)
       this.thisTimeCarList=[]
     },
-    delCarList(cate_id, item_id, name, food_id, price, specs) {
+    delCarList(cate_id, item_id, name,packing_fee, food_id, price, sku_id,specs,stock) {
       this.DELCAR_LIST({
         shop_id: this.id,
         cate_id,
         item_id,
         name,
+        packing_fee,
         food_id,
         price,
+        sku_id,
         specs,
+        stock
       })
     },
     showCar() {
@@ -431,12 +443,34 @@ export default {
         this.showCarDialog = true
       }
     },
-
-    onClickIcon() {
-      Toast('点击图标')
-    },
-    onClickButton() {
-      Toast('点击按钮')
+    async onClickButton() {
+      if(!this.thisShopAllFoodNum){
+        this.$toast.fail('购物车里还未加入任何商品')
+        return
+      }
+      console.log('----')
+      console.log(this.carList)
+      console.log(this.tempCarList)
+      console.log('----')
+      let addCar = []
+      let addCar2 =[]
+      Object.keys(this.tempCarList).forEach(cate_id=>{
+        Object.keys(this.tempCarList[cate_id]).forEach(food_id=>{
+          Object.keys(this.tempCarList[cate_id][food_id]).forEach(item=>{
+            this.tempCarList[cate_id][food_id][item].attrs=[]
+            this.tempCarList[cate_id][food_id][item].extra={}
+            this.tempCarList[cate_id][food_id][item].id=this.tempCarList[cate_id][food_id][item].food_id
+            delete this.tempCarList[cate_id][food_id][item].food_id
+            addCar.push(this.tempCarList[cate_id][food_id][item])
+          })
+        })
+      })
+      addCar2.push(addCar)
+      
+      const {data} = await postHttpAddCar(this.id,this.geohash,addCar2)
+      console.log('加入购物车',data)
+      this.SET_CARID(data.cart.id)
+      this.$router.push(subOrderPage(this.id))
     },
     async getRestaurantInfo() {
       const { data } = await getHttpRestaurantsHeader(this.id)
@@ -444,9 +478,9 @@ export default {
       this.tips = this.item.piecewise_agent_fee.tips
     },
     async getFoodsList() {
-
       const { data } = await getHttpFoodList(this.id)
       this.foodItem = data
+          this.SET_SUBSUCCESS(false)
       this.loading = false
     },
     computedPrice(list) {
@@ -472,6 +506,7 @@ export default {
         }
       }
       function scrollFoodsList() {
+        console.log('触发了')
         //获取所有食物列表滚动条高度
         var scrollLineHeight = wrapScrollNode.scrollTop
         //获取所有食物列表可视区高度
@@ -556,8 +591,8 @@ export default {
         console.log('llll',this.watchFlag)
         this.getSessionFlag=true
         this.GET_CARALL_LIST()
-        this.getAllPrice()
         this.getThisTimeCarList()
+        this.getAllPrice()
         // console.log(this.thisTimeCarList)
       }
     }
@@ -570,16 +605,21 @@ export default {
     console.log(this.tempCarList)
     console.log('当前购物车列表')
     console.log(this.thisTimeCarList)
+
+    this.subSuccess && this.clearAll()
+
+    // this.thisTimeCarList = JSON.parse(this.carList)
     
   },
   mounted() {
+
     this.tabOffset()
-    console.log('创建了')
   },
   updated() {
     !this.loading && this.scroolFoodsList()
   },
   created() {
+    console.log('创建了')
     this.id = this.$route.query.id
     this.getRestaurantInfo()
     this.getFoodsList()

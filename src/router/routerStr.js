@@ -32,4 +32,16 @@ export const userPage= '/user'
 //登录页面
 export const loginPage = '/login'
 //用户信息修改页面
-export const userInfoPage = '/userinfo'
+export const userInfoPage = '/userinfo/userdata'
+//下单页面
+export const subOrderPage = (id)=>{
+    return urlStr('/suborder/sub',{
+        shop_id:id
+    })
+}
+//订单详情页面
+export const orderInfo = (order_id)=>{
+    return urlStr('/order/orderinfo',{
+        order_id:order_id
+    })
+}

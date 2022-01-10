@@ -1,31 +1,30 @@
 <template>
   <div>
-    <div v-show="routerFlag">
+    <div>
       <MyNavBar :isShowLeft="true">基本信息</MyNavBar>
       <van-cell :center="true" value="头像" is-link>
         <template #right-icon>
           <div class="useImgBox"><van-icon class="userImg" name="manager-o" size="40" /></div>
         </template>
       </van-cell>
-      <van-cell @click="changeRouterFlag()" is-link to="/userinfo/setusername">
+      <van-cell is-link to="/userinfo/setusername">
         <template #title>
           <span class="custom-title">{{ username }}</span>
         </template>
       </van-cell>
-      <van-cell @click="changeRouterFlag()" to="/userinfo/addressedit/address" is-link>
+      <van-cell  to="/userinfo/addressedit/address" is-link>
         <template #title>
           <span class="custom-title">收货地址</span>
         </template>
       </van-cell>
-      <van-cell value="修改" @click="changeRouterFlag()" to="/forget" is-link>
+      <van-cell value="修改"  to="/forget" is-link>
         <template #title>
           <span class="custom-title">登录密码</span>
         </template>
       </van-cell>
-      <van-button class="outBtn" @click="outLogin" round type="danger" size="large">退出</van-button>
-    </div>
-    <div v-show="!routerFlag">
-      <router-view></router-view>
+       <div style="margin: 16px">
+        <van-button round block @click="outLogin" type="danger" >退出</van-button>
+      </div>
     </div>
   </div>
 </template>
@@ -36,8 +35,6 @@ import {removeStore} from '@/utils/utils.js'
 export default {
   data() {
     return {
-        //路由切换父组件隐藏
-      routerFlag: false,
       username: '',
     }
   },
@@ -49,26 +46,18 @@ export default {
     init() {
       this.username = this.userInfo.username
     },
-    changeRouterFlag(){
-        console.log('改了一次')
-        this.routerFlag=false
-    },
     outLogin(){
+      console.log(this.userInfo)
         removeStore('user_id')
         this.$router.push('/user')
         this.OUT_LOGIN()
     }
   },
   mounted() {
-      
-  },
-  deactivated() {
-      
-      this.routerFlag=false
+    this.userInfo && this.init()
+    
   },
   activated() {
-
-    this.routerFlag = true
     this.userInfo && this.init()
   },
   watch: {

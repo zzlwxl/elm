@@ -28,6 +28,7 @@
         </div>
       </van-dropdown-item>
     </van-dropdown-menu>
+
     <!-- <RestaurantList :obj="obj"></RestaurantList> -->
   </div>
 </template>
@@ -64,6 +65,9 @@ export default {
     }
   },
   created() {
+    this.$dialog.alert({
+      message: '后端计算距离服务到期，此页面无效',confirmButtonColor:'rgb(70, 182, 242)'
+    });
     this.lltude = this.$route.query.geohash.split(',')
     this.title = this.$route.query.title
     //餐馆分类ID

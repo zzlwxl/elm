@@ -6,9 +6,9 @@
       <van-button @click="chooseSpecs(foods)" class="specBtn" size="mini">选规格</van-button>
     </span>
     <span v-else class="priceClass">
-      <button v-if="carNum" class="addCarBtnClass" @click="delCarList(shopId, foods.category_id, foods.item_id, foods.name, foods.specfoods[0].food_id, foods.specfoods[0].price, foods.specfoods[0].specs)"><van-icon class="btnIcon" name="minus" /></button>
+      <button v-if="carNum" class="addCarBtnClass" @click="delCarList(shopId, foods.category_id, foods.item_id, foods.name,foods.specfoods[0].packing_fee, foods.specfoods[0].food_id, foods.specfoods[0].price,foods.specfoods[0].sku_id, foods.specfoods[0].specs,foods.specfoods[0].stock)"><van-icon class="btnIcon" name="minus" /></button>
       <span v-if="carNum" class="addCarNum">{{ carNum }}</span>
-      <button class="addCarBtnClass" @click="addCarList(shopId, foods.category_id, foods.item_id, foods.name, foods.specfoods[0].food_id, foods.specfoods[0].price, foods.specfoods[0].specs)"><van-icon class="btnIcon" name="plus" /></button>
+      <button class="addCarBtnClass" @click="addCarList(shopId, foods.category_id, foods.item_id, foods.name,foods.specfoods[0].packing_fee, foods.specfoods[0].food_id, foods.specfoods[0].price,foods.specfoods[0].sku_id, foods.specfoods[0].specs,foods.specfoods[0].stock)"><van-icon class="btnIcon" name="plus" /></button>
     </span>
   </div>
 </template>
@@ -31,15 +31,15 @@ export default {
       let cate_id = this.foods.category_id
       let item_id = this.foods.item_id
       if (this.tempCarList && this.tempCarList[cate_id] && this.tempCarList[cate_id][item_id]) {
-        let num = 0
+        let quantity = 0
         Object.values(this.tempCarList[cate_id][item_id]).forEach((item, index) => {
           // 如果减购到0，vux会把这个规格改为null，所以这里直接返回0
           if(!item){
             return 0
           }
-          num += item.num
+          quantity += item.quantity
         })
-        return num
+        return quantity
       } else {
         return 0
       }
@@ -50,12 +50,12 @@ export default {
     chooseSpecs(foods) {
       this.$emit('childChooseSpecs', foods)
     },
-    addCarList(shop_id, cate_id, item_id, name, food_id, price, specs) {
+    addCarList(shop_id, cate_id, item_id, name,packing_fee, food_id, price,sku_id, specs,stock) {
       this.$emit('childChooseFood',true)
-      this.ADDCAR_LIST({ shop_id, cate_id, item_id, name, food_id, price, specs })
+      this.ADDCAR_LIST({ shop_id, cate_id, item_id, name, packing_fee,food_id, price,sku_id, specs,stock })
     },
-    delCarList(shop_id, cate_id, item_id, name, food_id, price, specs) {
-      this.DELCAR_LIST({ shop_id, cate_id, item_id, name, food_id, price, specs })
+    delCarList(shop_id, cate_id, item_id, name,packing_fee, food_id, price,sku_id, specs,stock) {
+      this.DELCAR_LIST({ shop_id, cate_id, item_id, name, packing_fee,food_id, price,sku_id,specs,stock })
     },
   },
 }

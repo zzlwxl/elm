@@ -112,3 +112,31 @@ export const getHttpAddressList = (user_id) => http(`/v1/users/${user_id}/addres
  * 删除收货地址
  */
 export const delHttpDelAddress = (address_id,user_id) => http(`/v1/users/${user_id}/addresses/${address_id}`,{},'DELETE')
+/**
+ * 加入购物车
+ */
+export const postHttpAddCar = (restaurant_id,geohash,entities) =>http('/v1/carts/checkout',{
+    restaurant_id,geohash,entities
+},'POST')
+/**
+ * 提交订单
+ */
+export const postHttpOrder = (user_id,cart_id,address_id,restaurant_id,geohash,description,entities)=> http(`/v1/users/${user_id}/carts/${cart_id}/orders`,{
+    user_id,cart_id,address_id,restaurant_id,geohash,description,entities
+},'POST')
+/**
+ * 获取订单列表
+ */
+export const getHttpOrderList = (user_id,limit,offset)=>http(`/bos/v2/users/${user_id}/orders`,{
+    user_id,limit,offset
+})
+/**
+ * 获取订单详情
+ */
+export const getHttpOrderInfo = (user_id,order_id) => http(`/bos/v1/users/${user_id}/orders/${order_id}/snapshot`)
+/**
+ * 获取可用红包
+ */
+export const getHttpRed=(user_id,limit,offset)=>http(`/promotion/v2/users/${user_id}/hongbaos`,{
+    user_id,limit,offset
+})

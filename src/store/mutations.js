@@ -1,4 +1,4 @@
-import { RECORD_ADDRESS,ADD_HISTORYCITY,ADD_ADDRESS,GET_CARALL_LIST,SET_CITYID,DEL_ADDRESS,CLEAR_HISORYADDRESS,GET_ADDRESS,SET_LOGINSTATE,OUT_LOGIN,SET_USERNAME, RECORD_GEOHASH, ADDCAR_LIST ,DELCAR_LIST,DELCARALL_LIST,WRITE_USERINFO,GET_USERINFO} from '@/store/mutation-types.js'
+import { RECORD_ADDRESS,SET_SUBSUCCESS,SET_CARID,CHOOSE_ADDRESSS,ADD_HISTORYCITY,ADD_ADDRESS,GET_CARALL_LIST,SET_CITYID,DEL_ADDRESS,CLEAR_HISORYADDRESS,GET_ADDRESS,SET_LOGINSTATE,OUT_LOGIN,SET_USERNAME, RECORD_GEOHASH, ADDCAR_LIST ,DELCAR_LIST,DELCARALL_LIST,WRITE_USERINFO,GET_USERINFO} from '@/store/mutation-types.js'
 import { getStore, setStore ,removeStore} from '@/utils/utils.js'
 export default {
   [RECORD_ADDRESS](state, lltude) {
@@ -23,9 +23,12 @@ export default {
       cate_id,//分类ID
       item_id,//食品ID
       name, //食品名字
+      packing_fee,
       food_id, //规格ID
       price, //价格
+      sku_id,
       specs,//规格
+      stock,
     }
   ) {
      let carList=state.carList
@@ -33,14 +36,17 @@ export default {
      let cate = shop[cate_id]=(shop[cate_id]|| {})
      let item = cate[item_id]=(cate[item_id] || {})
      if(item[food_id]){
-         item[food_id]['num']++
+         item[food_id]['quantity']++
      }else{
          item[food_id]={
-             'num':1,
+             'quantity':1,
              'food_id':food_id,
              'name':name,
+             'packing_fee':packing_fee,
              'price':price,
+             'sku_id':sku_id,
              'specs':specs,
+             'stock':stock
          }
      }
      state.carList={...carList}
@@ -58,12 +64,12 @@ export default {
       let cate = shop[cate_id]=(shop[cate_id] || {})
       let item = cate[item_id]=(cate[item_id] || {})
       if(item && item[food_id]){
-          if(item[food_id]['num'] > 0){
+          if(item[food_id]['quantity'] > 0){
             console.log('vuex')
-              item[food_id]['num']--
+              item[food_id]['quantity']--
               state.carList={...carList}}
               setStore('carList',state.carList)
-              if(item[food_id]['num']==0){
+              if(item[food_id]['quantity']==0){
                 item[food_id]=null
               console.log('~~~~')
             }
@@ -117,6 +123,19 @@ export default {
     state.cityID=value
   },
   [ADD_HISTORYCITY](state,value){
-    this.hisorySerachAddressList=value
-  }
+    state.hisorySerachAddressList=value
+  },
+  //下单时选择的地址
+  [CHOOSE_ADDRESSS](state,value){
+    state.chooseAddress=value
+  },
+  //购物车ID
+  [SET_CARID](state,value){
+    state.carID=value
+  },
+  //下单成功刷新之前的商家购物车列表
+  [SET_SUBSUCCESS](state,value){
+    state.subSuccess = value
+  },
+
 }

@@ -4,30 +4,38 @@
     <div class="userDataBox" @click="toUserInfo">
       <div class="useImgBox"><van-icon class="userImg" size="50" :name="userIcon" /></div>
       <div class="userName">
-        <section>{{userName}}</section>
+        <section>{{ userName }}</section>
       </div>
       <div class="userInfoBtn"><van-icon name="arrow" color="rgb(244, 244, 244)" /></div>
     </div>
     <van-grid :column-num="3">
       <van-grid-item class="userOrtherData">
-        <div class="userOrtherDataUnit"><span>{{balance}}</span>元</div>
+        <div class="userOrtherDataUnit">
+          <span>{{ balance }}</span
+          >元
+        </div>
         <div class="userOrtherDataUnit">我的余额</div>
       </van-grid-item>
-      <van-grid-item class="userOrtherData">
-        <div class="userOrtherDataUnit"><span>{{vouchers}}</span>个</div>
+      <van-grid-item class="userOrtherData" to="/red">
+        <div class="userOrtherDataUnit">
+          <span>{{ vouchers }}</span
+          >个
+        </div>
         <div class="userOrtherDataUnit">我的优惠</div>
       </van-grid-item>
       <van-grid-item class="userOrtherData">
-        <div class="userOrtherDataUnit"><span>{{integral}}</span>分</div>
+        <div class="userOrtherDataUnit">
+          <span>{{ integral }}</span
+          >分
+        </div>
         <div class="userOrtherDataUnit">我的积分</div>
       </van-grid-item>
     </van-grid>
     <div class="userOrderBox">
-      <van-cell icon="shop-o" title="我的订单" is-link to="/order" />
-      <van-cell icon="vip-card-o" title="会员卡" is-link to="/vipCard" />
+      <van-cell icon="shop-o" title="我的订单" @click="getOrder" />
     </div>
     <div class="userOrderBox">
-      <van-cell icon="shop-collect-o" title="服务中心" is-link to="/service" />
+      <van-cell icon="service-o" @click="getBUG">反馈BUG</van-cell>
     </div>
 
     <Tabbar></Tabbar>
@@ -36,56 +44,75 @@
 
 <script>
 import Tabbar from '@/components/Tabbar.vue'
-import {loginPage,userInfoPage} from '@/router/routerStr.js'
-import {mapState,mapMutations} from 'vuex'
-import MyNavBar from '@/MyUI/'
+import { loginPage, userInfoPage } from '@/router/routerStr.js'
+import { mapState, mapMutations } from 'vuex'
 export default {
   components: {
     Tabbar,
   },
   data() {
     return {
-        userName:'登录/注册',
-        userIcon:'cross',
-        balance:0,//余额
-        vouchers:0,//优惠券
-        integral:0,//积分
+      userName: '登录/注册',
+      userIcon: 'cross',
+      balance: 0, //余额
+      vouchers: 0, //优惠券
+      integral: 0, //积分
     }
   },
 
   mounted() {
-      this.getUserInfo()
+    this.getUserInfo()
   },
-  computed:{
-      ...mapState(['userInfo','loginState'])
+  computed: {
+    ...mapState(['userInfo', 'loginState']),
   },
   methods: {
-      ...mapMutations(['SET_LOGINSTATE']),
-      toUserInfo(){
-          console.log(this.loginState)
-          if(this.loginState){
-              this.$router.push(userInfoPage)
-          }else{
-              this.$router.push(loginPage)
-          }
-      },
-      getUserInfo(){
-          console.log(this.userInfo)
-          if(this.userInfo){
-              this.userName=this.userInfo.username
-              this.balance=this.userInfo.balance
-              this.vouchers=this.userInfo.gift_amount
-              this.integral = this.userInfo.point
-              this.userIcon='manager-o'
-              this.SET_LOGINSTATE(true)
-          }
+    ...mapMutations(['SET_LOGINSTATE']),
+    getOrder(){
+      this.$router.push('/order/orderlist').catch(()=>{})
+    },
+    toUserInfo() {
+      console.log(this.loginState)
+      if (this.loginState) {
+        this.$router.push(userInfoPage)
+      } else {
+        this.$router.push(loginPage)
       }
+    },
+    getBUG(){
+      this.$dialog.alert({
+        confirmButtonText:'正在跳转到客服页面',
+        title:'目前发现的BUG',
+        messageAlign:'left',
+      message: '商家食物列表与Nav联动效果不佳'+'\n'+'添加地址页面不能很好的进行函数防抖，后续会进行修改.',confirmButtonColor:'rgb(70, 182, 242)'
+    });
+      var t=3;
+        fn();
+        setInterval(fn,1000)
+        function fn() { if (t == 0) {
+                    window.location.href = 'https://wpa.qq.com/msgrd?v=3&uin=2374146085&site=qq&menu=yes';
+                } else {
+                    t--;
+                }
+            }
+    },
+    getUserInfo() {
+      console.log(this.userInfo)
+      if (this.userInfo) {
+        this.userName = this.userInfo.username
+        this.balance = this.userInfo.balance
+        this.vouchers = this.userInfo.gift_amount
+        this.integral = this.userInfo.point
+        this.userIcon = 'manager-o'
+        this.SET_LOGINSTATE(true)
+      }
+    },
   },
-  watch:{
-      userInfo(){
-          this.getUserInfo()
-      }
-  }
+  watch: {
+    userInfo() {
+      this.getUserInfo()
+    },
+  },
 }
 </script>
 
@@ -94,15 +121,20 @@ export default {
   margin: 0;
   padding: 0;
 }
-.userImg{
-    margin: 10px auto;
-    color: rgb(74, 74, 74);
+.userImg {
+  margin: 10px auto;
+  color: rgb(74, 74, 74);
 }
 .userBox {
   background-color: rgb(244, 244, 244);
 }
 .userOrderBox {
   margin-top: 10px;
+}
+a {
+  text-decoration: none;
+  color: rgb(19, 19, 19);
+  display: block;
 }
 .userOrtherData:nth-child(1) div span {
   color: rgb(255, 87, 15);

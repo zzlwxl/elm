@@ -3,7 +3,7 @@
     <MyNavBar :isShowLeft="true">新增地址</MyNavBar>
     <van-form @submit="onSubmit">
       <van-field v-model="userName" placeholder="请填写姓名" :rules="[{ required: true }]" />
-      <van-field @input="debounce(getSearchCityName, 1000)" v-model="addressInput" placeholder="请选择地址" :rules="[{ required: true }]" />
+      <van-field @blur="blurAddressInput" @input="debounce(getSearchCityName, 1000,true)" v-model="addressInput" placeholder="请选择地址" :rules="[{ required: true }]" />
       <van-cell v-show="showSerachCityList" v-for="(item, index) in searchAddressList" :key="'key' + index" icon="location-o" :label="item.address" :title="item.name" @click="subAddress(index, item.latitude + ','+item.longitude)" />
       <van-field v-model="addressInfo" placeholder="请填写详细地址" :rules="[{ required: true }]" />
       <van-field name="radio" label="标签">
@@ -57,6 +57,9 @@ export default {
       ...mapState(['address', 'cityID','userInfo']),
   },
   methods: {
+      blurAddressInput(){
+   
+      },
       async onSubmit() {
           if(!this.trueAddress){
               return this.$toast('填入正确地址')
@@ -85,6 +88,7 @@ export default {
       this.geohash = geohash
     },
     async getSearchCityName() {
+        console.log('搜索')
       const { data } = await getHttpSearchCityName(this.cityID, this.addressInput)
       let temp = data
       if (!data.message) {
@@ -99,15 +103,41 @@ export default {
         this.searchAddressList = []
       }
     },
-    debounce(func, wait) {
-      let timer = null
-      return (function () {
-        if (timer !== null) {
+    //函数防抖
+    debounce(func, wait,triggleNow) {
+        console.log('进入防抖函数')
+      var timer = null
+       var debounced = function () {
+          var _self= this,args = arguments;
+        if (!timer) {
+            console.log('清除定时器')
           clearTimeout(timer)
-        } else {
-          timer = setTimeout(func, wait)
         }
-      })()
+        if(triggleNow){
+            var exec = !timer
+            timer = setTimeout(function(){
+                timer = null;
+                console.log('设置定时器',timer)
+                 func.apply(_self,args)
+            },wait)
+            //首次进入就执行
+            if(exec){
+                console.log('首次不防抖，执行',exec,timer)
+                func.apply(_self,args)
+            }
+        }else{
+            console.log('首次就防抖')
+            timer=setTimeout(function(){
+                func.apply(_self,args);
+            },wait)
+        }
+      }
+      debounced.remove = function(){
+          console.log('remove')
+          clearTimeout(timer);
+          timer=null
+      }
+      return debounced()
     },
   },
   mounted() {},

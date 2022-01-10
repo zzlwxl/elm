@@ -104,6 +104,7 @@ export default {
     height: 41px;
 }
 .navBar {
+  position: relative;
   background-color: rgb(70, 182, 242);
   height: 30px;
   width: 96%;
@@ -121,12 +122,13 @@ export default {
   color: rgb(255, 255, 255);
 }
 .left {
+  position:fixed;
   float: left;
   padding-top: 3px;
 }
 .right {
-  float: right;
+  position: absolute;
+  right: 0;
   padding-top: 3px;
-  // padding-right: 10px;
 }
 </style>

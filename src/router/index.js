@@ -8,7 +8,6 @@ import Search from '@/Pages/Search.vue'
 import Shop from '@/components/RestaurantInfo.vue'
 import User from '@/Pages/User.vue'
 import Order from '@/Pages/Order.vue'
-import VipCard from '@/Pages/VipCard.vue'
 import Service from '@/Pages/Service.vue'
 import Login from '@/Pages/Login.vue'
 import UserInfo from '@/Pages/UserInfo.vue'
@@ -17,6 +16,10 @@ import SetUserName from '@/Pages/SetUserName.vue'
 import Address from '@/Pages/Address.vue'
 import AddressAdd from '@/Pages/AddressAdd.vue'
 import Null from '@/Pages/Null.vue'
+import SubOrder from '@/Pages/SubOrder.vue'
+import ChooseAddress from '@/Pages/ChooseAddress.vue'
+import OrderInfo from '@/Pages/OrderInfo.vue'
+import Red from '@/Pages/Red.vue'
 
 import { getStore } from '@/utils/utils.js'
 Vue.use(Router)
@@ -34,6 +37,15 @@ const router = new Router({
     { path: '/home', component: Home },
     { path: '/city/:id', component: City, props: true },
     { path: '/food', component: Food },
+    {path:'/suborder',component:Null,
+    meta:{
+      login_require: true,
+    },
+    children:[
+      {path:'sub',component:SubOrder,props:true},
+      {path:'subchooseaddress',component:ChooseAddress}
+    ]
+  },
     { path: '/search', component: Search },
     {
       path: '/shop',
@@ -43,18 +55,31 @@ const router = new Router({
       },
     },
     { path: '/user', component: User },
-    { path: '/order', component: Order },
-    { path: '/vipCard', component: VipCard },
+    { path: '/order', component: Null,
+   
+    children:[
+      {path:'orderlist',component:Order,meta:{
+        keepAlive:true
+      }},
+      {path:'orderinfo',component:OrderInfo}
+    ] 
+  },
+    { path: '/red', component: Red ,
+  meta:{
+    login_require: true,
+  }
+  },
     { path: '/service', component: Service },
     { path: '/login', component: Login },
     {
       path: '/userinfo',
-      component: UserInfo,
+      component: Null,
       meta: {
         keepAlive: true,
         login_require: true,
       },
       children: [
+        {path:'userdata',component:UserInfo},
         { path: 'setusername', component: SetUserName },
         { path: 'addressedit',component:Null,
         children:[
