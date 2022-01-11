@@ -53,6 +53,7 @@ export default {
       foodEntryList: [], //食品分类列表
       searchPage: '',
       homePage: '',
+      
     }
   },
   async created() {
