@@ -111,8 +111,7 @@ export default {
   position: absolute;
   top: 44px;
   bottom: 100px;
-  left: 269px;
-  right: 0px;
+  right: 3px;
   width: 100px;
   color: #ff6200;
   height: 23px;

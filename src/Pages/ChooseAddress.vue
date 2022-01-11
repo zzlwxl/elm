@@ -49,8 +49,9 @@ export default {
     },
     async getAddress() {
       const { data } = await getHttpAddressList(getStore('user_id'))
-      console.log(data)
-
+      if(!data.length){
+        this.$toast.fail('您还未添加过任何地址')
+      }
       let temp = data
       this.AddressList = temp
     },

@@ -25,6 +25,7 @@
       <van-tabs line-height="0px" @click="clickCommentTab" v-model="active" line-width="0px" title-active-color="rgb(70, 182, 242)">
         <van-tab title="商品">
           <div class="footer">
+            <van-loading class="headLoad" v-if="loading">加载中...</van-loading>
             <van-skeleton animate :row="25" :loading="loading">
               <van-divider class="divider" />
               <div id="nav" class="foodCageClass">
@@ -815,6 +816,9 @@ export default {
 .spcesAddClass {
   float: right;
 }
+.headLoad{
+  text-align: center;
+}
 .spcesDialogClass {
   padding: 20px;
 }
@@ -841,7 +845,8 @@ export default {
   height: 20px;
   color: rgb(155, 155, 155);
   border: 1px solid rgb(155, 155, 155);
-  border-radius: 40%;
+  border-radius: 50%;
+  margin-top: 1px;
   margin-left: 2px;
   margin-right: 2px;
   background-color: transparent;

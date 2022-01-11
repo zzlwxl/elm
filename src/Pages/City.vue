@@ -46,7 +46,7 @@ export default {
     ...mapState(['hisorySerachAddressList'])
   },
   methods: {
-    ...mapMutations(['GET_ADDRESS','CLEAR_HISORYADDRESS','ADD_HISTORYCITY']),
+    ...mapMutations(['GET_ADDRESS','CLEAR_HISORYADDRESS','ADD_HISTORYCITY','SET_CITY']),
     initData() {
       //获取搜索历史记录
       if (getStore('placeHistory')) {
@@ -68,7 +68,7 @@ export default {
     async onSearch() { 
       if(this.inputAddress){
       const { data, status } = await getHttpSearchCityName(this.id,this.inputAddress)
-      if (status !== 200) {
+      if (status !== 200 || !data.length) {
         return this.$toast('搜索失败')
       } else {
         this.isShowHistory=false
@@ -105,6 +105,7 @@ export default {
       }
       //把已经追加、添加的列表重新记录到本地
       setStore('placeHistory', JSON.stringify(this.hisorySerachAddressList))
+      this.SET_CITY(true)
       this.$router.push(searchFoodsPage(geohash.latitude,geohash.longitude))
     },
     clearInput() {
