@@ -122,12 +122,18 @@ export default {
       return parseInt(obj)
     },
     async getRestaurant() {
+      console.log('此时')
       this.id = this.$route.query.shop_id
       Object.keys(this.carList[this.id]).forEach((cate_id) => {
+        console.log('1')
+        console.log('2')
         Object.keys(this.carList[this.id][cate_id]).forEach((food_id) => {
+          console.log('3',this.carList[this.id][cate_id][food_id])
           Object.keys(this.carList[this.id][cate_id][food_id]).forEach((item) => {
-            this.thisTimeCarList.push(this.carList[this.id][cate_id][food_id][item])
-            this.orderPrice += this.carList[this.id][cate_id][food_id][item].price * this.carList[this.id][cate_id][food_id][item].quantity
+            if(this.carList[this.id][cate_id][food_id][item]){
+              this.thisTimeCarList.push(this.carList[this.id][cate_id][food_id][item])
+              this.orderPrice += this.carList[this.id][cate_id][food_id][item].price * this.carList[this.id][cate_id][food_id][item].quantity
+            }
           })
         })
       })
@@ -136,6 +142,7 @@ export default {
       this.tips = data.piecewise_agent_fee.tips
       console.log('配送费', this.getCaption(this.tips, 1, '¥'))
       this.item = data
+      console.log('item',this.item)
     },
     tabColor(type) {
       switch (type) {
@@ -152,6 +159,7 @@ export default {
       // 如果vuex里有选择的地址，就不请求了
       if (this.chooseAddress.address) {
         this.addressData = this.chooseAddress
+        console.log('有地址',this.addressData)
         return
       }
       const { data } = await getHttpAddressList(getStore('user_id'))

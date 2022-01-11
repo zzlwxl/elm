@@ -37,6 +37,9 @@
     <div class="userOrderBox">
       <van-cell icon="service-o" @click="getBUG">反馈BUG</van-cell>
     </div>
+    <div class="userOrderBox">
+      <van-cell icon="orders-o" @click="getWeb">博客</van-cell>
+    </div>
 
     <Tabbar></Tabbar>
   </div>
@@ -95,6 +98,9 @@ export default {
                     t--;
                 }
             }
+    },
+    getWeb(){
+      window.location.href = 'https://www.wangxuelong.vip';
     },
     getUserInfo() {
       console.log(this.userInfo)

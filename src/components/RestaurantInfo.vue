@@ -455,19 +455,22 @@ export default {
       console.log('----')
       let addCar = []
       let addCar2 =[]
+      console.log('bug:',this.tempCarList)
       Object.keys(this.tempCarList).forEach(cate_id=>{
         Object.keys(this.tempCarList[cate_id]).forEach(food_id=>{
           Object.keys(this.tempCarList[cate_id][food_id]).forEach(item=>{
-            this.tempCarList[cate_id][food_id][item].attrs=[]
-            this.tempCarList[cate_id][food_id][item].extra={}
-            this.tempCarList[cate_id][food_id][item].id=this.tempCarList[cate_id][food_id][item].food_id
-            delete this.tempCarList[cate_id][food_id][item].food_id
-            addCar.push(this.tempCarList[cate_id][food_id][item])
+            if(this.tempCarList[cate_id][food_id][item]){
+              this.tempCarList[cate_id][food_id][item].attrs=[]
+              this.tempCarList[cate_id][food_id][item].extra={}
+              this.tempCarList[cate_id][food_id][item].id=this.tempCarList[cate_id][food_id][item].food_id
+              delete this.tempCarList[cate_id][food_id][item].food_id
+              addCar.push(this.tempCarList[cate_id][food_id][item])
+            }
           })
         })
       })
       addCar2.push(addCar)
-      
+      console.log('列表',addCar2)
       const {data} = await postHttpAddCar(this.id,this.geohash,addCar2)
       console.log('加入购物车',data)
       this.SET_CARID(data.cart.id)
