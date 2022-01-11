@@ -1,6 +1,6 @@
 技术栈：vue2+vuex+router+Vant
 
-npm run serve 运行
+npm run serve 运行（由于gitee默认大小写不敏感，所以运行时需要把src/components/restaurantList中的restaurantList中的改成大写字母开头
 
 在线演示地址：http://elm.wangxuelong.vip
 
