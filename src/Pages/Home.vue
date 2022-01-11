@@ -1,7 +1,8 @@
 <template>
   <div>
     <MyNavBar :isShowLeft="true"></MyNavBar>
-    <van-skeleton animate :row="30" :loading="loading">
+    <van-loading class="headLoad" v-if="loading">加载中...</van-loading>
+    <van-skeleton  animate :row="30" :loading="loading">
       <van-index-bar>
         <span v-for="(item, key) in sortCityList" :key="key">
           <van-index-anchor :index="key" />
@@ -43,6 +44,7 @@ export default {
       }
       this.sortCityList = citySortList //但是此时是把整个对象给赋给它了，所以对象发生了变化，也就被vue检测到了，就会渲染到页面
       console.log(this.sortCityList)
+
       this.loading = false
     },
   },
@@ -50,4 +52,8 @@ export default {
 }
 </script>
 
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+.headLoad{
+  text-align: center;
+}
+</style>

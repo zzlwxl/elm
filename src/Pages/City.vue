@@ -127,4 +127,7 @@ export default {
     font-size: 12px;
     color: rgb(195, 189, 189);
 }
+.van-cell__left-icon{
+  margin-left:  4px !important;
+}
 </style>

@@ -3,7 +3,7 @@
       <MyNavBar :isShowLeft="true">订单详情</MyNavBar>
 
 <div class="heard">
-      <van-card :price="item.float_minimum_order_amount + '起送/' + tips" :desc="'营业' + item.opening_hours" :title="item.name" :thumb="'http://item.wangxuelong.vip:8001/img/' + item.image_path">
+      <van-card :price="item.float_minimum_order_amount + '起送/' + tips" :desc="'营业' + item.opening_hours" :title="item.name" :thumb="'http://elm.wangxuelong.vip:8001/img/' + item.image_path">
         <template #tags>
           <div class="starClass">
             <van-rate gutter="1px" :readonly="true" color="#ffd21e" void-color="#c8c9cc" size="10px" v-model="item.rating" allow-half void-icon="star" />
@@ -144,8 +144,7 @@ mounted() {
   position: absolute;
   top: 44px;
   bottom: 100px;
-  left: 269px;
-  right: 0px;
+  right: 3px;
   width: 100px;
   height: 23px;
 }
@@ -180,8 +179,7 @@ mounted() {
   position: absolute;
   top: 11px;
   bottom: 100px;
-  left: 324px;
-  right: 0px;
+  right: 3px;
   width: 50px;
   height: 12px;
 }
@@ -205,6 +203,9 @@ mounted() {
 .van-sidebar-item--select::before {
   background-color: rgb(70, 182, 242);
 }
+.van-cell__left-icon{
+  margin-left:  4px !important;
+}
 .van-card__price-integer {
   font-size: 12px !important;
   color: rgb(155, 155, 155);
@@ -224,9 +225,8 @@ mounted() {
   background-color: #f4b700;
 }
 .van-card {
-  padding: 8px -2px;
+  padding: 8px 16px !important;
 }
-
 .van-grid-item__icon {
   font-size: 46px;
 }

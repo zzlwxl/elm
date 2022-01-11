@@ -3,7 +3,7 @@
     <MyNavBar>订单</MyNavBar>
     <van-list class="msiteBox" v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoadOrderList(offset, limit)">
       <div @click="orderInfo(item.id)" class="heard" v-for="(item, index) in orderListAll" :key="index">
-        <van-card  :title="item.restaurant_name" :thumb="'http://item.wangxuelong.vip:8001/img/' + imgList[item.total_amount % 3]">
+        <van-card  :title="item.restaurant_name" :thumb="'http://elm.wangxuelong.vip:8001/img/' + imgList[item.total_amount % 3]">
          
           <template #tags> 
               <div class="orderID">{{'商品名：'+ item.basket.group[0][0].name }}{{ item.basket.group[0].length > 1 ? ' 等' + item.basket.group[0].length + '件商品' : '' }} </div>
@@ -33,7 +33,7 @@ export default {
     Tabbar,
   },
   computed: {
-    ...mapState(['userInfo']),
+    ...mapState(['userInfo','subSuccess']),
   },
   data() {
     return {
@@ -44,12 +44,14 @@ export default {
       offset: 0,
       limit: 5,
       imgList: ['17d60c1c8d639884.png', '17d60c2527f39885.png', '17d60c4f8d339886.jpeg'],
+      getFlag:false
     }
   },
   methods: {
       orderInfo(id){
           this.$router.push(orderInfo(id))
       },
+
     async onLoadOrderList(offset, limit) {
       if(!getStore('user_id')){
         this.$toast.fail('还未登录，所以没有订单')
@@ -66,21 +68,28 @@ export default {
       this.offset += limit
       this.loading = false //加载结束
       //全部加载完成
+      console.log('长度',this.orderList.length)
       if (this.orderList.length === 0) {
+        console.log('加载结束')
         this.finished = true
         return
       }
       //加载完成后追加到总列表
       this.orderListAll.push(...this.orderList)
-      console.log(this.orderListAll)
+      console.log('列表',this.orderListAll)
     },
+    init(){
+      this.loading=false
+      this.finished=false
+      this.offset=0
+      this.orderList=[]
+      this.orderListAll=[]
+    }
   },
   activated() {
-    this.onLoadOrderList(this.offset,this.limit)
-    
-  },
-  mounted() {
-      this.onLoadOrderList(this.offset,this.limit)
+    this.init()
+    // 下单成功后获取新订单列表
+    this.subSuccess && this.onLoadOrderList(this.offset,this.limit)
   },
 }
 </script>
@@ -138,8 +147,7 @@ export default {
   position: absolute;
   top: 11px;
   bottom: 100px;
-  left: 324px;
-  right: 0px;
+  right: 3px;
   width: 50px;
   height: 12px;
 }
@@ -185,9 +193,11 @@ export default {
   background-color: #f4b700;
 }
 .van-card {
-  padding: 8px -2px;
+  padding: 8px 16px !important;
 }
-
+.van-cell__left-icon{
+  margin-left:  4px !important;
+}
 .van-grid-item__icon {
   font-size: 46px;
 }

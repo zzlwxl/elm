@@ -1,19 +1,19 @@
 <template>
   <div>
-      <MyNavBar :isShowLeft="true">下单</MyNavBar>
-      <van-cell is-link to="/suborder/subchooseaddress" value="重新选择地址">
+    <MyNavBar :isShowLeft="true">下单</MyNavBar>
+    <van-cell v-if="addressData" is-link to="/suborder/subchooseaddress" value="重新选择地址">
       <template #title>
         <span class="custom-title">{{ addressData.name }}</span>
         <span>{{ addressData.phone }}</span>
       </template>
-
       <template #label>
         <van-tag :type="tabColor(addressData.tag_type)">{{ addressData.tag }}</van-tag>
         {{ addressData.address }}
       </template>
     </van-cell>
+    <van-cell v-else is-link to="/suborder/subchooseaddress" value="您还未添加过任何地址，请先添加地址"> </van-cell>
     <div class="heard">
-      <van-card :price="item.float_minimum_order_amount + '起送/' + tips" :desc="'营业' + item.opening_hours" :title="item.name" :thumb="'http://item.wangxuelong.vip:8001/img/' + item.image_path">
+      <van-card :price="item.float_minimum_order_amount + '起送/' + tips" :desc="'营业' + item.opening_hours" :title="item.name" :thumb="'http://elm.wangxuelong.vip:8001/img/' + item.image_path">
         <template #tags>
           <div class="starClass">
             <van-rate gutter="1px" :readonly="true" color="#ffd21e" void-color="#c8c9cc" size="10px" v-model="item.rating" allow-half void-icon="star" />
@@ -32,105 +32,109 @@
         </template>
       </van-card>
     </div>
-    <van-cell v-for="(item,index) in thisTimeCarList" :key="index" center :title="item.name"  :label="item.specs.length ? item.specs[0].value : ''" >
+    <van-cell v-for="(item, index) in thisTimeCarList" :key="index" center :title="item.name" :label="item.specs.length ? item.specs[0].value : ''">
       <template #default>
-        <span class="numColor">{{'x '+item.quantity}}</span>
-        <span>{{'¥'+item.price}}</span>
+        <span class="numColor">{{ 'x ' + item.quantity }}</span>
+        <span>{{ '¥' + item.price }}</span>
       </template>
     </van-cell>
-    <van-cell  center title="配送费">
+    <van-cell center title="配送费">
       <template #default>
-        <span>{{'¥'+getCaption(tips,1,'¥')}}</span>
+        <span>{{ '¥' + getCaption(tips, 1, '¥') }}</span>
       </template>
     </van-cell>
-    <van-cell  center title="订单总价">
+    <van-cell center title="订单总价">
       <template #default>
-        <span class="orderPriceColor">{{'¥'+orderPriceCom}}</span>
+        <span class="orderPriceColor">{{ '¥' + orderPriceCom }}</span>
       </template>
     </van-cell>
     <van-cell-group>
-  <van-field v-model="note" label="备注" placeholder="可输入喜欢的口味"/>
-</van-cell-group>
-<div style="margin: 16px;">
-    <van-button round block type="info" @click="subOrder" >提交</van-button>
-  </div>
+      <van-field v-model="note" label="备注" placeholder="可输入喜欢的口味" />
+    </van-cell-group>
+    <div style="margin: 16px">
+      <van-button round block type="info" @click="subOrder">提交</van-button>
+    </div>
   </div>
 </template>
 
 <script>
-import { getStore,setStore,removeStore } from '@/utils/utils.js'
-import { getHttpAddressList,getHttpRestaurantsHeader,postHttpOrder} from '@/service/getData.js'
-import {mapState,mapMutations} from 'vuex'
-import {restaurantInfoPage} from '@/router/routerStr.js'
+import { getStore, setStore, removeStore } from '@/utils/utils.js'
+import { getHttpAddressList, getHttpRestaurantsHeader, postHttpOrder } from '@/service/getData.js'
+import { mapState, mapMutations } from 'vuex'
+import { restaurantInfoPage } from '@/router/routerStr.js'
 export default {
   data() {
     return {
-      id:'',
-      shop_id:'',
+      id: '',
+      shop_id: '',
       tips: '',
-      addressData:{},
-      carData:[],
-      shopData:{},
-      thisTimeCarList:[],
-      item:{},
-      orderPrice:0,
-      note:'',
+      addressData: {},
+      carData: [],
+      shopData: {},
+      thisTimeCarList: [],
+      item: {},
+      orderPrice: 0,
+      note: '',
     }
   },
-  computed:{
-    ...mapState(['chooseAddress','carID','carList','geohash','userInfo','latitude','longitude']),
-    orderPriceCom(){
-      return this.orderPrice+this.getCaption(this.tips,1,'¥')
-    }
+  computed: {
+    ...mapState(['chooseAddress', 'carID', 'carList', 'geohash', 'userInfo', 'latitude', 'longitude']),
+    orderPriceCom() {
+      return this.orderPrice + this.getCaption(this.tips, 1, '¥')
+    },
   },
   methods: {
-    ...mapMutations(['GET_CARALL_LIST','SET_SUBSUCCESS']),
-  async subOrder(){
+    ...mapMutations(['GET_CARALL_LIST', 'SET_SUBSUCCESS']),
+    async subOrder() {
+      if(!this.addressData){
+        this.$toast.fail('请添加地址')
+        return
+      }
       console.log('提交了')
       let order = []
       order.push(this.thisTimeCarList)
-      const {data} = await postHttpOrder(this.userInfo.id,this.carID,this.addressData.id,this.id,this.geohash,this.note,order)
-      if(data.status === 1){
+      const { data } = await postHttpOrder(this.userInfo.id, this.carID, this.addressData.id, this.id, this.geohash, this.note, order)
+      if (data.status === 1) {
         this.$toast.success('下单成功')
-        let sessionCarList =  JSON.parse(getStore('carList'))
-        console.log(typeof(session))
-        Object.keys(sessionCarList).forEach(shop_id=>{
-          if(shop_id === this.id){
+        let sessionCarList = JSON.parse(getStore('carList'))
+        console.log(typeof session)
+        Object.keys(sessionCarList).forEach((shop_id) => {
+          if (shop_id === this.id) {
             delete sessionCarList[shop_id]
           }
         })
         removeStore('carList')
-        setStore('carList',sessionCarList)
+        setStore('carList', sessionCarList)
         this.GET_CARALL_LIST()
         this.SET_SUBSUCCESS(true)
-        this.$router.replace(restaurantInfoPage(this.latitude,this.longitude,this.id))
-      }else{
+        this.$router.replace(restaurantInfoPage(this.latitude, this.longitude, this.id))
+      } else {
         this.$toast.fail(data.message)
       }
     },
-    getCaption(obj,state,str) {
-    var index=obj.lastIndexOf(str);
-    if(state==0){
-        obj=obj.substring(0,index);
-    }else {
-        obj=obj.substring(index+1,obj.length);
-    }
-    return parseInt(obj);
-},
-    async getRestaurant(){
-      this.id=this.$route.query.shop_id
-      Object.keys(this.carList[this.id]).forEach(cate_id=>{
-        Object.keys(this.carList[this.id][cate_id]).forEach(food_id=>{
-          Object.keys(this.carList[this.id][cate_id][food_id]).forEach(item=>{
+    getCaption(obj, state, str) {
+      var index = obj.lastIndexOf(str)
+      if (state == 0) {
+        obj = obj.substring(0, index)
+      } else {
+        obj = obj.substring(index + 1, obj.length)
+      }
+      return parseInt(obj)
+    },
+    async getRestaurant() {
+      this.id = this.$route.query.shop_id
+      Object.keys(this.carList[this.id]).forEach((cate_id) => {
+        Object.keys(this.carList[this.id][cate_id]).forEach((food_id) => {
+          Object.keys(this.carList[this.id][cate_id][food_id]).forEach((item) => {
             this.thisTimeCarList.push(this.carList[this.id][cate_id][food_id][item])
             this.orderPrice += this.carList[this.id][cate_id][food_id][item].price * this.carList[this.id][cate_id][food_id][item].quantity
           })
         })
       })
-        console.log('这家',this.thisTimeCarList)
-      const {data} = await getHttpRestaurantsHeader(this.id)
+      console.log('这家', this.thisTimeCarList)
+      const { data } = await getHttpRestaurantsHeader(this.id)
       this.tips = data.piecewise_agent_fee.tips
-      console.log('配送费',this.getCaption(this.tips,1,'¥'))
+      console.log('配送费', this.getCaption(this.tips, 1, '¥'))
       this.item = data
     },
     tabColor(type) {
@@ -144,19 +148,20 @@ export default {
       }
     },
     async getAddress() {
-      console.log('id=',this.carID)
+      console.log('id=', this.carID)
       // 如果vuex里有选择的地址，就不请求了
-      if(this.chooseAddress.address){
+      if (this.chooseAddress.address) {
         this.addressData = this.chooseAddress
         return
       }
       const { data } = await getHttpAddressList(getStore('user_id'))
       this.addressData = data[0]
+      console.log('地址' + this.addressData)
       console.log(data)
     },
-    getCar(){
-      console.log('购物车列表',this.carList)
-    }
+    getCar() {
+      console.log('购物车列表', this.carList)
+    },
   },
   mounted() {
     this.getAddress()
@@ -184,10 +189,10 @@ export default {
   width: 100px;
   height: 23px;
 }
-.orderPriceColor{
+.orderPriceColor {
   color: #ff6200;
 }
-.numColor{
+.numColor {
   color: #ff6200;
   margin-right: 40px;
 }
@@ -213,8 +218,7 @@ export default {
   position: absolute;
   top: 11px;
   bottom: 100px;
-  left: 324px;
-  right: 0px;
+  right: 3px;
   width: 50px;
   height: 12px;
 }
@@ -269,5 +273,8 @@ export default {
 .van-card__desc {
   font-size: 12px;
   color: rgb(155, 155, 155);
+}
+.van-cell__left-icon {
+  margin-left: 4px !important;
 }
 </style>

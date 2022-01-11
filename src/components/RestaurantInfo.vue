@@ -2,7 +2,7 @@
   <div class="box">
     <van-nav-bar class="navClass" left-arrow @click-left="$router.push('/msite')" />
     <div class="heard">
-      <van-card :price="item.float_minimum_order_amount + '起送/' + tips" :desc="'营业' + item.opening_hours" :title="item.name" :thumb="'http://item.wangxuelong.vip:8001/img/' + item.image_path">
+      <van-card class="card" :price="item.float_minimum_order_amount + '起送/' + tips" :desc="'营业' + item.opening_hours" :title="item.name" :thumb="'http://elm.wangxuelong.vip:8001/img/' + item.image_path">
         <template #tags>
           <div class="starClass">
             <van-rate gutter="1px" :readonly="true" color="#ffd21e" void-color="#c8c9cc" size="10px" v-model="item.rating" allow-half void-icon="star" />
@@ -43,7 +43,7 @@
                     <van-divider content-position="left">{{ foodsData.name }}</van-divider>
                     <!-- 食物列表 -->
                     <div v-for="(foodsList, index) in foodsData.foods" :key="index">
-                      <van-card v-if="foodsList.specfoods[0].price" class="foodListClass" :desc="foodsList.description" :title="foodsList.name" :thumb="'http://item.wangxuelong.vip:8001/img/' + imgList[foodsList.specfoods[0].price % 3]">
+                      <van-card v-if="foodsList.specfoods[0].price" class="foodListClass" :desc="foodsList.description" :title="foodsList.name" :thumb="'http://elm.wangxuelong.vip:8001/img/' + imgList[foodsList.specfoods[0].price % 3]">
                         <template #tags>
                           <span class="tipsClass">{{ foodsList.tips }}</span>
                           <br />
@@ -153,7 +153,7 @@
               <div class="commentListBox">
                 <div class="commentBox">
                   <section class="userImgBox">
-                    <img class="userImg" :src="'http://item.wangxuelong.vip:8001/img/' + imgList[Math.round(Math.random() * 2)]" />
+                    <img class="userImg" :src="'http://elm.wangxuelong.vip:8001/img/' + imgList[Math.round(Math.random() * 2)]" />
                   </section>
                   <section class="userNameBox">
                     <span>{{ item.username }}</span>
@@ -164,7 +164,7 @@
                   </section>
                   <section class="commentImgBox">
                     <span v-for="(item, index) in item.item_ratings" :key="index">
-                      <img class="commentImg" v-if="item.image_hash !== ''" :src="'http://item.wangxuelong.vip:8001/img/' + imgList[Math.round(Math.random() * 2)]" />
+                      <img class="commentImg" v-if="item.image_hash !== ''" :src="'http://elm.wangxuelong.vip:8001/img/' + imgList[Math.round(Math.random() * 2)]" />
                     </span>
                   </section>
                   <section class="imgTabBox">
@@ -470,7 +470,7 @@ export default {
       const {data} = await postHttpAddCar(this.id,this.geohash,addCar2)
       console.log('加入购物车',data)
       this.SET_CARID(data.cart.id)
-      this.$router.push(subOrderPage(this.id))
+      this.$router.push(subOrderPage(this.id)).catch(()=>{})
     },
     async getRestaurantInfo() {
       const { data } = await getHttpRestaurantsHeader(this.id)
@@ -956,8 +956,7 @@ export default {
   position: absolute;
   top: 11px;
   bottom: 100px;
-  left: 324px;
-  right: 0px;
+  right: 3px;
   width: 50px;
   height: 12px;
 }
@@ -970,8 +969,7 @@ export default {
   position: absolute;
   top: 44px;
   bottom: 100px;
-  left: 269px;
-  right: 0px;
+  right: 3px;
   width: 100px;
   height: 23px;
 }
@@ -1042,10 +1040,10 @@ export default {
   background-color: #f4b700;
 }
 .van-card {
-  padding: 8px -2px;
+  padding: 8px 16px !important;
 }
 .van-cell {
-  padding: 10px 0px;
+  padding: 10px 0px !important;
 }
 .van-grid-item__icon {
   font-size: 46px;

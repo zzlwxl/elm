@@ -117,4 +117,7 @@ export default {
 .van-info .van-sidebar-item__info{
   background-color: rgb(21, 79, 196);
 }
+.van-cell__left-icon{
+  margin-left:  4px !important;
+}
 </style>

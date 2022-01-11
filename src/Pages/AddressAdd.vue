@@ -144,4 +144,8 @@ export default {
 }
 </script>
 
-<style></style>
+<style lang="less" scoped>
+.van-cell__left-icon{
+  margin-left:  4px !important;
+}
+</style>

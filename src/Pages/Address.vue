@@ -66,4 +66,7 @@ export default {
 .custom-title {
   margin-right: 4px;
 }
+.van-cell__left-icon{
+  margin-left:  4px !important;
+}
 </style>

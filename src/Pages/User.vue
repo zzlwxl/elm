@@ -187,4 +187,7 @@ a {
   margin-top: 40px;
   width: 20px;
 }
+.van-cell__left-icon{
+  margin-left:  4px !important;
+}
 </style>

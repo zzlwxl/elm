@@ -2,7 +2,7 @@
   <div>
     <van-list class="msiteBox" v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoadRestaurants(offset, limit)">
       <van-cell v-for="(item, index) in restaurantsAll" :key="index">
-        <van-card @click="restaurantInfo(item.id)" :price="item.float_minimum_order_amount + '起送/' + item.piecewise_agent_fee.tips" :desc="'营业' + item.opening_hours" :title="item.name" :thumb="'http://item.wangxuelong.vip:8001/img/' + item.image_path">
+        <van-card @click="restaurantInfo(item.id)" :price="item.float_minimum_order_amount + '起送/' + item.piecewise_agent_fee.tips" :desc="'营业' + item.opening_hours" :title="item.name" :thumb="'http://elm.wangxuelong.vip:8001/img/' + item.image_path">
           <template #tags>
             <van-tag plain type="danger">品牌</van-tag>
             <div class="starClass">
@@ -58,6 +58,7 @@ export default {
     },
   },
   methods: {
+    ...mapMutations(['SET_SHOPID']),
     //按需请求数据
     async onLoadRestaurants(offset, limit) {
       console.log('调用了一次onLoadRestaurants--------------------------------------')
@@ -77,6 +78,7 @@ export default {
       console.log(this.restaurantsAll)
     },
     restaurantInfo(id) {
+      this.SET_SHOPID(id)
       this.$router.push(restaurantInfoPage(this.latitude,this.longitude,id))
     },
   },
@@ -111,9 +113,8 @@ export default {
   position: absolute;
   top: 11px;
   bottom: 100px;
-  left: 324px;
-  right: 0px;
-  width: 45px;
+  right: 3px;
+  width: 50px;
   height: 12px;
 }
 .bzpsClass {
@@ -125,20 +126,20 @@ export default {
   position: absolute;
   top: 44px;
   bottom: 100px;
-  left: 269px;
-  right: 0px;
+  right: 3px;
   width: 100px;
   height: 23px;
 }
 .fzsClass {
   box-sizing: border-box;
-  font-size: 12px;
   margin-left: 1px;
   color: rgb(70, 182, 242);
   border: 1px solid rgb(70, 182, 242);
 }
 .fzs1Class {
   margin-left: 1px;
+  z-index: 99999;
+  font-size: 12px !important;
   color: rgb(255, 255, 255);
   border: 1px solid rgb(70, 182, 242);
   background-color: rgb(70, 182, 242);
@@ -198,7 +199,7 @@ export default {
   background-color: #f4b700;
 }
 .van-card {
-  padding: 8px -2px;
+  padding: 8px 16px !important;
 }
 .van-cell {
   padding: 10px 0px;

@@ -20,6 +20,7 @@ export default new Vuex.Store({
     chooseAddress:{},
     carID:'',//购物车ID
     subSuccess:false,
+    shopID:''
   },
   getters,
 	actions,

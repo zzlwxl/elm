@@ -58,7 +58,6 @@ export default {
     },
   },
   mounted() {
-    this.onLoadRedList(this.offset, this.limit)
   },
 }
 </script>

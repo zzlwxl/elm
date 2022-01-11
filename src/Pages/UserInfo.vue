@@ -83,4 +83,7 @@ export default {
 .userImg {
   margin: 5px auto;
 }
+.van-cell__left-icon{
+  margin-left:  4px !important;
+}
 </style>

@@ -62,4 +62,8 @@ export default {
 }
 </script>
 
-<style></style>
+<style lang="less" scopd>
+.van-cell__left-icon{
+  margin-left:  4px !important;
+}
+</style>
