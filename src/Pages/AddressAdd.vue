@@ -62,7 +62,11 @@ export default {
       },
       async onSubmit() {
           if(!this.trueAddress){
-              return this.$toast('填入正确地址')
+              return this.$toast.fail('填入正确地址')
+          }else if(!this.tag){
+            return this.$toast.fail('选择标签')
+          }else if(!this.sex){
+            return this.$toast.fail('选择性别')
           }
           
      const data = await postHttpAddAddress(

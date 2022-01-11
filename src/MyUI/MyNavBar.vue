@@ -111,7 +111,7 @@ export default {
   font-size: 14px;
   text-align: center;
   padding-top: 10px;
-  margin: 0 auto;
+  margin: 0 2px;
 }
 .navBar span {
   color: rgb(255, 255, 255);
@@ -129,6 +129,7 @@ export default {
 .right {
   position: absolute;
   right: 0;
+  float: right;
   padding-top: 3px;
 }
 </style>
