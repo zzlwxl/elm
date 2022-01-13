@@ -16,8 +16,6 @@
     <keep-alive>
       <comment :obj="obj" is="RestaurantList"> </comment>
     </keep-alive>
-
-    <!-- <RestaurantList :obj="obj"></RestaurantList> -->
     <Tabbar></Tabbar>
   </div>
 </template>

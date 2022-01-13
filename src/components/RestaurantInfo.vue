@@ -1,6 +1,6 @@
 <template>
   <div class="box">
-    <van-nav-bar class="navClass" left-arrow @click-left="$router.push('/msite')" />
+    <van-nav-bar class="navClass" left-arrow @click-left="$router.go(-1)" />
     <div class="heard">
       <van-card class="card" :price="item.float_minimum_order_amount + '起送/' + tips" :desc="'营业' + item.opening_hours" :title="item.name" :thumb="'http://elm.wangxuelong.vip:8001/img/' + item.image_path">
         <template #tags>
@@ -256,8 +256,6 @@ export default {
       console.log('watch............')
       this.getThisTimeCarList()
       this.getAllPrice()
-      //开启深度监听，只要对象中任何一个属性变化，都会触发对象的监听器
-      deep: true
     },
     thisShopAllFoodNum() {
       if (!this.thisShopAllFoodNum) {

@@ -15,7 +15,7 @@
       </div>
       <div class="passwordBox">
         <div class="inputBox">
-          <van-field id="inputPassword" v-model="confirmpassword" label-width="70px" type="password" name="确认新密码" label="确认新密码" placeholder="确认新密码" :rules="[{ required: true}]" />
+          <van-field id="inputPassword" v-model="confirmpassword" label-width="70px" type="password" name="确认新密码" label="确认新密码" placeholder="确认新密码" :rules="[{ required: true }]" />
         </div>
       </div>
       <div class="passwordBox">
@@ -24,7 +24,7 @@
         </div>
         <span class="codeBox">
           <template>
-            <img @click="getCode" :src="codeImg">
+            <img @click="getCode" :src="codeImg" />
           </template>
         </span>
       </div>
@@ -36,9 +36,10 @@
 </template>
 
 <script>
-import {postHttpCode} from '@/service/getData.js'
-import {mapState} from 'vuex'
-import {postHttpChangePassword} from '@/service/getData.js'
+import { postHttpCode } from '@/service/getData.js'
+import { mapState, mapMutations } from 'vuex'
+import {removeStore} from '@/utils/utils.js'
+import { postHttpChangePassword } from '@/service/getData.js'
 export default {
   data() {
     return {
@@ -48,48 +49,45 @@ export default {
       confirmpassword: '',
       captcha_code: '',
       codeImg: '',
-      cap:''
+      cap: '',
     }
   },
-  computed:{
-      ...mapState(['userInfo'])
+  computed: {
+    ...mapState(['userInfo']),
   },
   methods: {
-    async getCode(){
-        const {data} = await postHttpCode()
-        this.codeImg=data.code
-        this.cap=data.cap.toString()
+    ...mapMutations(['OUT_LOGIN']),
+    async getCode() {
+      const { data } = await postHttpCode()
+      this.codeImg = data.code
+      this.cap = data.cap.toString()
     },
-    async changePassword(){
-        const {data} = await postHttpChangePassword(
-            this.username,
-            this.oldpassWord,
-            this.newpassword,
-            this.confirmpassword,
-            this.captcha_code,
-            this.cap)
-            console.log(data)
-            if(data.status === 1){
-                this.$toast.success(data.success)
-                this.$router.go(-1)
-            }else{
-                this.$toast.fail(data.message);
-            }
+    async changePassword() {
+      const { data } = await postHttpChangePassword(this.username, this.oldpassWord, this.newpassword, this.confirmpassword, this.captcha_code, this.cap)
+      console.log(data)
+      if (data.status === 1) {
+        this.$toast.success(data.success+'，请重新登录')
+        removeStore('user_id')
+        this.$router.push('/login')
+        this.OUT_LOGIN()
+      } else {
+        this.$toast.fail(data.message)
+      }
     },
-    init(){
-        this.username=this.userInfo.username
-    }
+    init() {
+      this.username = this.userInfo.username
+    },
   },
   watch: {
-      userInfo(){
-          if(this.userInfo){
-              this.init()
-          }
+    userInfo() {
+      if (this.userInfo) {
+        this.init()
       }
-  },
-  mounted(){
-      this.getCode()
     },
+  },
+  mounted() {
+    this.getCode()
+  },
 }
 </script>
 
@@ -110,8 +108,8 @@ export default {
   font-size: 12px;
   color: rgb(177, 177, 177);
 }
-.codeBox{
-    float: right;
-    width: 30%;
+.codeBox {
+  float: right;
+  width: 30%;
 }
 </style>

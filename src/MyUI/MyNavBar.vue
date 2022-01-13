@@ -68,7 +68,7 @@ export default {
       if (!this.userInfo && getStore('user_id')) {
         var id = getStore('user_id')
         console.log('用户ID' + id)
-        this.getUserInfo(id, 3)
+        this.getUserInfo(id)
       }
     }
   },

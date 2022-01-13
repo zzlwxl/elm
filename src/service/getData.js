@@ -2,7 +2,6 @@ import http from '@/config/http.js'
 /**
  * 获取商家食品分类列表
  */
-//  requestGet('/shopping/v2/menu?restaurant_id=' + this.id)
 export const getHttpFoodList=restaurant_id=>http('/shopping/v2/menu',{
     restaurant_id:restaurant_id
 })
@@ -41,6 +40,14 @@ export const getHttpLocalRestaurants=(objData,offset,limit)=>http('/shopping/res
     offset:offset,
     limit:limit
 })
+/**
+ * 获取搜索的商家列表
+ */
+export const getHttpSearchRestaurants=(geohash,keyword)=>http('/v4/restaurants',{
+    geohash,
+    keyword
+})
+
 /**
  * 获取食品分类选项列表
  */

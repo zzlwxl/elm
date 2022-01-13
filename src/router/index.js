@@ -70,7 +70,10 @@ const router = new Router({
       {path:'subchooseaddress',component:ChooseAddress}
     ]
   },
-    { path: '/search', component: Search },
+    { path: '/search', component: Search ,
+    meta: {
+      keepAlive: true,
+    },},
     {
       path: '/shop',
       component: Shop,
