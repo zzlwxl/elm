@@ -61,7 +61,7 @@ const router = new Router({
     { path: '/home', component: Home },
     { path: '/city/:id', component: City, props: true },
     { path: '/food', component: Food },
-    {path:'/suborder',component:Null,
+    {path:'/suborder',component:Null,redirect:'/msite',
     meta:{
       login_require: true,
     },
@@ -82,7 +82,7 @@ const router = new Router({
       },
     },
     { path: '/user', component: User },
-    { path: '/order', component: Null,
+    { path: '/order', component: Null,redirect:'/user',
    
     children:[
       {path:'orderlist',component:Order,meta:{
@@ -101,6 +101,7 @@ const router = new Router({
     {
       path: '/userinfo',
       component: Null,
+      redirect:'/user',
       meta: {
         keepAlive: true,
         login_require: true,

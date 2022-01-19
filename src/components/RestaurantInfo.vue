@@ -507,6 +507,7 @@ export default {
           timer = setTimeout(func, wait)
         }
       }
+      
       function scrollFoodsList() {
         console.log('触发了')
         //获取所有食物列表滚动条高度
@@ -527,14 +528,6 @@ export default {
               allNavLi[j].className = 'btnLiClass'
             }
             allNavLi[i].className = 'on'
-            //所有食物列表滑动到某一个食物列表上时，
-            // 就拿这个食物列表的下标去拿对应下标的 食物分类 的上方偏移量，
-            // 然后再拿着偏移量去改变 所有食物分类 的上方偏移量
-
-            navScrollNode.scrollTo({
-              top: allNavLi[i].offsetTop,
-              behavior: 'smooth',
-            })
           }
         }
       }

@@ -85,9 +85,8 @@ export default {
     getBUG(){
       this.$dialog.alert({
         confirmButtonText:'正在跳转到客服页面',
-        title:'目前发现的BUG',
         messageAlign:'left',
-      message: '商家食物列表与Nav联动效果不佳'+'\n'+'添加地址页面不能很好的进行函数防抖，后续会进行修改.',confirmButtonColor:'rgb(70, 182, 242)'
+        confirmButtonColor:'rgb(70, 182, 242)'
     });
       var t=3;
         fn();
