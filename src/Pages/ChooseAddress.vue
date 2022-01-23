@@ -2,13 +2,13 @@
   <div>
     <MyNavBar :isShowLeft="true" :isShowRight="true" iconRight="plus" toRight="/userinfo/addressedit/addressadd">选择地址</MyNavBar>
 
-    <van-cell v-for="(item, index) in AddressList" :key="'key' + index">
+    <van-cell @click="choose(item)" v-for="(item, index) in AddressList" :key="'key' + index">
       <template #title>
         <span class="custom-title">{{ item.name }}</span>
         <span>{{ item.phone }}</span>
       </template>
       <template #right-icon>
-        <van-icon @click="choose(item)" name="circle" />
+        <van-icon name="circle" />
       </template>
       <template #label>
         <van-tag :type="tabColor(item.tag_type)">{{ item.tag }}</van-tag>

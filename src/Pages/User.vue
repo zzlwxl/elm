@@ -126,10 +126,7 @@ export default {
   margin: 0;
   padding: 0;
 }
-.userImg {
-  margin: 10px auto;
-  color: rgb(74, 74, 74);
-}
+
 .userBox {
   background-color: rgb(244, 244, 244);
 }
@@ -169,9 +166,16 @@ a {
   margin: 10px;
   width: 80px;
   height: 80px;
-  text-align: center;
+  position: relative;
   background-color: rgb(157, 234, 255);
   border-radius: 50%;
+}
+.userImg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  color: rgb(74, 74, 74);
 }
 .userName {
   float: left;

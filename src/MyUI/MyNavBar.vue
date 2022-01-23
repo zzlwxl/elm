@@ -97,7 +97,7 @@ export default {
   position: fixed;
   z-index: 999;
   width: 100%;
-  border-bottom: 1px solid rgb(240, 240, 240);
+  // border-bottom: 1px solid rgb(240, 240, 240);
 }
 #show{
     width: 100%;

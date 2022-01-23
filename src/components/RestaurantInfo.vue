@@ -632,10 +632,7 @@ export default {
 .commentStar {
   width: 80px;
 }
-.userImg {
-  width: 25px;
-  height: 25px;
-}
+
 .commentImg {
   width: 60px;
   height: 60px;
@@ -646,11 +643,12 @@ export default {
 .imgTabBox {
   margin-top: 10px;
   margin-left: 50px;
+  
 }
 .imgTabBox span {
   color: rgb(155, 155, 155);
   border: 1px solid rgb(155, 155, 155);
-  border-radius: 10%;
+  border-radius: 5%;
   background-color: #fff;
   margin-right: 5px;
   font-size: 12px;
@@ -689,9 +687,15 @@ export default {
   display: inline-block;
 }
 .userImgBox {
+  width: 30px;
+  height: 30px;
   display: inline-block;
   background-color: rgb(70, 182, 242);
   border-radius: 50%;
+}
+.userImg {
+  width: 30px;
+  height: 30px;
 }
 .tabCommentBox {
   margin: 10px;
@@ -708,7 +712,7 @@ export default {
   color: rgb(255, 255, 255);
   padding: 3%;
   background-color: rgb(70, 182, 242);
-  border-radius: 10%;
+  border-radius: 5%;
 }
 .tabCommentBox .tabUp {
   float: left;
@@ -718,7 +722,7 @@ export default {
   color: rgb(58, 58, 58);
   padding: 3%;
   background-color: rgb(160, 190, 199);
-  border-radius: 10%;
+  border-radius: 5%;
 }
 .tabCommentBox .tabUpAll {
   float: left;
@@ -728,7 +732,7 @@ export default {
   color: rgb(58, 58, 58);
   padding: 3%;
   background-color: rgb(160, 190, 199);
-  border-radius: 10%;
+  border-radius: 5%;
 }
 .tabClick {
   color: rgb(255, 255, 255) !important;
