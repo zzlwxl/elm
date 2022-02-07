@@ -49,7 +49,7 @@
                           <span class="tipsClass">{{ foodsList.tips }}</span>
                           <br />
                           <span v-if="foodsList.specfoods.length >= 2" class="priceClass">
-                            {{ '¥' + computedPrice(foodsList.specfoods) }}
+                            {{ '¥' + computedPrice(foodsList.specfoods) }}  
                             <span class="fontColorClass">起</span>
                             <span class="addCarNumBoxClass">
                               <AddCar @childChooseSpecs="chooseFoodDataFun" :foods="foodsList" :shopId="id"></AddCar>
@@ -490,7 +490,7 @@ export default {
       list.forEach((item) => {
         arr.push(item.price)
       })
-      return Math.max(...arr)
+      return Math.min(...arr)
     },
     scroolFoodsList() {
       var wrapScrollNode = document.querySelector('#wrap')
